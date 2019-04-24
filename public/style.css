@@ -1,6 +1,6 @@
 /* Fonts from Google Fonts - more at https://fonts.google.com */
-@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700');
 @import url('https://fonts.googleapis.com/css?family=Merriweather:400,700');
+@import url('https://fonts.googleapis.com/css?family=Roboto+Mono');
 
 body {
   background-color: #364156;
@@ -8,12 +8,25 @@ body {
   font-size: 18px;
   margin: 0;
   color: #fff;
+  font-family: "Roboto Mono", monospace;
 }
 
 h1 {
   text-align: center;
   font-family: "Merriweather", serif;
   font-size: 32px;
+}
+
+header {
+  background-color: #666;
+  padding: 1%;
+  text-align: right;
+  font-size: 18px;
+}
+
+.status {
+  float: right;
+  vertical-align: middle;
 }
 
 .column {
@@ -28,6 +41,6 @@ h1 {
   width: 60%;
 }
 
-.score {
+.scoreboard {
   width: 20%;
 }

@@ -3,11 +3,16 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title></title>
-    <link rel="stylesheet" href="style.css">
+    <title>game</title>
+    <link rel="stylesheet" type="text/css" href="./public/style.css">
+    <script src="/public/main.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
   </head>
   <body>
     <h1>Stack Queue Game</h1>
+    <header id="status-box">Server: <span id="status">-</span> / online users: <span id="online">0</span> / user:<span id="username">-</span>
+    </header>
     <div class="column operation">
       operation
     </div>

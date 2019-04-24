@@ -2,12 +2,15 @@ var express = require('express');
 var app = express();
 var fs = require('fs');
 var http = require('http');
+var path = require('path');
 var server = http.Server(app);
 var io = require('socket.io')(server);
 
+app.use("/public", express.static(__dirname+'/public'));
+
 app.get('/', function(req, res) {
 	console.log(req.url);
-	res.sendFile(path.join(__dirname, './public', 'index.html'));
+	res.sendFile(path.join(__dirname, '/public', 'index.html'));
 });
 
 server.listen(8888, () => {
@@ -18,19 +21,15 @@ server.listen(8888, () => {
 
 let onlineCount = 0;
 
-io.on('connection', (socket) => {
+io.on('connect', (socket) => {
 	onlineCount++;
 
 	io.emit('online', onlineCount);
 
 	socket.on('disconnect', () => {
 		onlineCount = (onlineCount < 0 ? 0 : onlineCount-1);
-		io.emit("online", onlineCount);
+		io.emit('online', onlineCount);
 	});
-
-	// socket.on('send', (msg) => {
-	// 	io.emit('msg', msg);
-	// });
 });
 
 if (process.argv.length !== 3) {
