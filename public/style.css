@@ -24,9 +24,16 @@ header {
   font-size: 18px;
 }
 
-.status {
-  float: right;
-  vertical-align: middle;
+#status {
+  color: #FFC9D8;
+}
+
+#online {
+  color: #FFC9D8;
+}
+
+#username {
+  color: #FFC9D8;
 }
 
 .column {
@@ -41,6 +48,12 @@ header {
   width: 60%;
 }
 
-.scoreboard {
+.score-container {
   width: 20%;
+  text-align: right;
 }
+/*
+.score {
+  width: 20%;
+  text-align: right;
+}*/

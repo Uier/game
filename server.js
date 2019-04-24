@@ -1,12 +1,17 @@
+if (process.argv.length !== 3) {
+  	console.log('Usage: node server.js [game configuration (json format)]')
+  	process.exit(1);
+}
+
 var express = require('express');
 var app = express();
 var fs = require('fs');
-var http = require('http');
 var path = require('path');
-var server = http.Server(app);
+var server = require('http').Server(app);
 var io = require('socket.io')(server);
+var gameModule = require('./gameModule');
 
-app.use("/public", express.static(__dirname+'/public'));
+app.use('/public', express.static(__dirname+'/public'));
 
 app.get('/', function(req, res) {
 	console.log(req.url);
@@ -21,7 +26,7 @@ server.listen(8888, () => {
 
 let onlineCount = 0;
 
-io.on('connect', (socket) => {
+io.on('connection', (socket) => {
 	onlineCount++;
 
 	io.emit('online', onlineCount);
@@ -32,11 +37,10 @@ io.on('connect', (socket) => {
 	});
 });
 
-if (process.argv.length !== 3) {
-  	console.log('Usage: node server.js [game configuration (json format)]')
-  	process.exit(1);
-}
+var update;
 
 var gameConfig = fs.readFileSync(process.argv[2], 'ascii');
 gameConfig = JSON.parse(gameConfig);
 console.log(gameConfig);
+
+var game = new gameModule.Game(update, gameConfig[0], gameConfig[1], gameConfig[2]);

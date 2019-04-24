@@ -7,20 +7,47 @@
     <link rel="stylesheet" type="text/css" href="./public/style.css">
     <script src="/public/main.js"></script>
     <script src="/socket.io/socket.io.js"></script>
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>var socket = io();</script>
   </head>
   <body>
     <h1>Stack Queue Game</h1>
-    <header id="status-box">Server: <span id="status">-</span> / online users: <span id="online">0</span> / user:<span id="username">-</span>
+    <header id="status-box">Server: <span id="status">-</span> / online users: <span id="online">0</span> / user: <span id="username">-</span>
     </header>
+    <hr>
     <div class="column operation">
       operation
     </div>
     <div class="column state">
-      state
+      stack queue game
     </div>
-    <div class="column scoreboard">
-      score
+    <div class="column score-container">
+      <table border="1" class="column score">
+        <tr style="color: #6eeb83;">
+        　<td style="width: 75%;">Team Name</td>
+        　<td style="width: 25%;">score</td>
+        </tr>
+        <tr>
+        　<td style="width: 75%;">admin</td>
+        　<td style="width: 25%;">0</td>
+        </tr>
+        <tr>
+        　<td style="width: 75%;">empty</td>
+        　<td style="width: 25%;">0</td>
+        </tr>
+        <tr>
+        　<td style="width: 75%;">empty</td>
+        　<td style="width: 25%;">0</td>
+        </tr>
+        <tr>
+        　<td style="width: 75%;">empty</td>
+        　<td style="width: 25%;">0</td>
+        </tr>
+        <tr>
+        　<td style="width: 75%;">empty</td>
+        　<td style="width: 25%;">0</td>
+        </tr>
+      </table>
     </div>
   </body>
 </html>

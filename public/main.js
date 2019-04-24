@@ -1,7 +1,10 @@
 var name = prompt('TeamName');
 
 document.addEventListener('DOMContentLoaded', function() {
+	console.log(name);
+
 	socket.on('connect', function() {
+		console.log('connected');
 	    $('#status').text('Connected');
 	    $('#username').text(name);
 	});
