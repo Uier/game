@@ -52,8 +52,7 @@ header {
   width: 20%;
   text-align: right;
 }
-/*
+
 .score {
-  width: 20%;
-  text-align: right;
-}*/
+  border-color: #666;
+}

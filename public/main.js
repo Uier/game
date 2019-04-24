@@ -1,9 +1,9 @@
-var setCookie = function(name) {
+function setCookie(name) {
 	var cookie = 'username=' + name + ';';
 	document.cookie = cookie;
 }
 
-var getCookie = function(prefix) {
+function getCookie(prefix) {
 	prefix = prefix + '=';
 	var cookie = document.cookie.split(';');
 	for ( var i=0; i<cookie.length; ++i ) {
@@ -15,7 +15,7 @@ var getCookie = function(prefix) {
 	return '';
 }
 
-var checkCookie = function() {
+function checkCookie() {
 	var user = getCookie('username');
 	console.log(user);
 	if ( user == '' ) {
@@ -44,4 +44,14 @@ document.addEventListener('DOMContentLoaded', function() {
 	socket.on('online', function(amount) {
 	    $('#online').text(amount);
 	});
+
+	$('stack_button').click(function() {
+        console.log('stack');
+        // wsSend(getGameData().r,'s');
+    });
+
+    $('queue_button').click(function() {
+        console.log('queue');
+        // wsSend(getGameData().r,'q');
+    });
 });

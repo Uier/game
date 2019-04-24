@@ -27,9 +27,6 @@ server.listen(8888, () => {
 let onlineCount = 0;
 
 io.on('connection', (socket) => {
-	var cookie;
-	// var user = getUser(cookie);
-	
 	onlineCount++;
 
 	io.emit('online', onlineCount);
