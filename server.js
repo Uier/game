@@ -27,6 +27,9 @@ server.listen(8888, () => {
 let onlineCount = 0;
 
 io.on('connection', (socket) => {
+	var cookie;
+	// var user = getUser(cookie);
+	
 	onlineCount++;
 
 	io.emit('online', onlineCount);
@@ -35,12 +38,14 @@ io.on('connection', (socket) => {
 		onlineCount = (onlineCount < 0 ? 0 : onlineCount-1);
 		io.emit('online', onlineCount);
 	});
-});
 
-var update;
+	socket.on('submit', () => {
+
+	});
+});
 
 var gameConfig = fs.readFileSync(process.argv[2], 'ascii');
 gameConfig = JSON.parse(gameConfig);
 console.log(gameConfig);
 
-var game = new gameModule.Game(update, gameConfig[0], gameConfig[1], gameConfig[2]);
+// var game = new gameModule.Game(gameConfig[0], gameConfig[1], gameConfig[2]);
