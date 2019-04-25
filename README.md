@@ -1,6 +1,6 @@
 ## game for NTNU CSIE summer camp
 - [ ] operations
 - [ ] states
-- [ ] score
-- [ ] cookies
+- [x] score
+- [x] cookies
 - [ ] users
