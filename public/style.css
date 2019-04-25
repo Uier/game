@@ -24,6 +24,11 @@ header {
   font-size: 18px;
 }
 
+pre {
+  display: inline;
+  margin: 0;
+}
+
 #status {
   color: #FFC9D8;
 }
@@ -55,4 +60,12 @@ header {
 
 .score {
   border-color: #666;
+}
+
+.queue {
+  font-size: 20px;
+}
+
+.stack {
+  font-size: 20px;
 }

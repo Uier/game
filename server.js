@@ -19,8 +19,7 @@ app.get('/', function(req, res) {
 });
 
 server.listen(8888, () => {
-	console.log(server.address().address);
-	console.log(server.address().port);
+	console.log('port: ' + server.address().port);
 	console.log('Link Start');
 });
 
