@@ -25,11 +25,35 @@ function checkCookie() {
 	return user;
 }
 
+function random_value(max_value) {
+	return 1 + Math.floor(Math.random() * max_value);
+}
+
 var name = checkCookie();
-console.log(name);
 
 document.addEventListener('DOMContentLoaded', function() {
-	console.log(name);
+
+	socket.on('setgame', function(operation) {
+		var round, prefix, suffix, content;
+		console.log(operation.length);
+		for ( var i=0; i<operation.length; ++i ) {
+			prefix = '<div class="set" id="rnd' + String(i+1) + '">';
+			suffix = '</div>';
+			if ( operation[i] == 'i' ) {
+				content = prefix + 'Push' + suffix;
+			} else if ( operation[i] == 'o' ) {
+				content = prefix + 'Pop' + suffix;
+			} else {
+				content = prefix + '???' + suffix;
+			}
+			console.log(content);
+			$('#operation').append(content);
+		}
+	});
+
+	socket.on('startgame', function(operation, max_value) {
+
+	});
 
 	socket.on('connect', function() {
 		console.log('connected');
@@ -45,13 +69,12 @@ document.addEventListener('DOMContentLoaded', function() {
 	    $('#online').text(amount);
 	});
 
-	$('stack_button').click(function() {
-        console.log('stack');
-        // wsSend(getGameData().r,'s');
-    });
-
-    $('queue_button').click(function() {
-        console.log('queue');
-        // wsSend(getGameData().r,'q');
-    });
 });
+
+function click_queue() {
+    console.log(name + ' choose queue');
+}
+
+function click_stack() {
+    console.log(name + ' choose stack');
+}

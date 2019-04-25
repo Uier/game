@@ -1,6 +1,7 @@
 ## game for NTNU CSIE summer camp
-- [ ] operations
-- [ ] states
+- [x] operations
 - [x] score
 - [x] cookies
+- [ ] states btn
 - [ ] users
+- [ ] switch round

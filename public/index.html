@@ -15,50 +15,39 @@
     <header id="status-box">Server: <span id="status">-</span> / online users: <span id="online">0</span> / user: <span id="username">-</span>
     </header>
     <hr>
-    <div class="column operation">
-      operation
+    <div class="operation" id="operation">
     </div>
-    <div class="column state">
-      <div style="font-size: 16px;">please<span id="operator"></span><span id="element"></span></div>
-      <div class="queue">
-        <span id="queue-btn">&lt;queue&gt;</span>
-        <pre>   ->  </pre>
-        <span id="queue-arr">[]</span>
-        <pre>  -></pre>
-      </div>
-      <div class="stack">
-        <span id="stack-btn">&lt;stack&gt;</span>
-        <pre>  <->  </pre>
-        <span id="stack-arr">[]</span>
-      </div>
-      <br>
-      <a style="font-size: 16px;">choose &lt;stack&gt; or &lt;queue&gt; to push or pop the element</a>
+    <div class="state">
+      <div class="title">Please <span id="operator">push </span><span id="element">15.</span></div>
+      <div class="queue"><span onclick="click_queue(); return false" class="queue-btn">&lt;queue&gt;</span>   ->  <span id="queue-arr">[]</span>  -></div>
+      <div class="stack"><span onclick="click_stack(); return false" class="stack-btn">&lt;stack&gt;</span>  <->  <span id="stack-arr">[]</span></div>
+      <!-- <div style="font-size: 16px; float: left;">click &lt;stack&gt; or &lt;queue&gt; to push or pop the element</div> -->
     </div>
-    <div class="column score-container">
-      <table border="1" class="column score">
+    <div class="score-container">
+      <table border="1" class="score" cellpadding="5px">
         <tr style="color: #6eeb83;">
-        　<td style="width: 75%;">Team Name</td>
-        　<td style="width: 25%;">score</td>
+        　<td style="width: 70%;">Team Name</td>
+        　<td style="width: 30%;">Score</td>
         </tr>
         <tr>
-        　<td style="width: 75%;" id="admin">admin</td>
-        　<td style="width: 25%;" id="adminscore">0</td>
+        　<td style="width: 70%;" id="admin">特世大魔王</td>
+        　<td style="width: 30%;" id="adminscore">0</td>
         </tr>
         <tr>
-        　<td style="width: 75%;" id="team1">empty</td>
-        　<td style="width: 25%;" id="team1score">0</td>
+        　<td style="width: 70%;" id="team1">Team1</td>
+        　<td style="width: 30%;" id="team1score">0</td>
         </tr>
         <tr>
-        　<td style="width: 75%;" id="team2">empty</td>
-        　<td style="width: 25%;" id="team2score">0</td>
+        　<td style="width: 70%;" id="team2">Team2</td>
+        　<td style="width: 30%;" id="team2score">0</td>
         </tr>
         <tr>
-        　<td style="width: 75%;" id="team3">empty</td>
-        　<td style="width: 25%;" id="team3score">0</td>
+        　<td style="width: 70%;" id="team3">Team3</td>
+        　<td style="width: 30%;" id="team3score">0</td>
         </tr>
         <tr>
-        　<td style="width: 75%;" id="team4">empty</td>
-        　<td style="width: 25%;" id="team4score">0</td>
+        　<td style="width: 70%;" id="team4">Team4</td>
+        　<td style="width: 30%;" id="team4score">0</td>
         </tr>
       </table>
     </div>
