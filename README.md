@@ -2,6 +2,6 @@
 - [x] operations
 - [x] score
 - [x] cookies
-- [ ] states btn
+- [x] states btn
 - [ ] users
 - [ ] switch round
