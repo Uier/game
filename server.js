@@ -40,7 +40,7 @@ io.on('connection', (socket) => {
 
 	io.emit('setgame', gameConfig[0], gameConfig[1]);
 
-	io.emit('startgame');
+	io.emit('startgame', onlineCount);
 
 	socket.on('disconnect', () => {
 		onlineCount = (onlineCount < 0 ? 0 : onlineCount-1);
@@ -72,6 +72,11 @@ io.on('connection', (socket) => {
 			console.dir(queue[id]);
 			console.dir(stack[id]);
 		}
+		var score = 0;
+		for ( var i=0; i<queue[id].length; ++i )	score += queue[id][i];
+		for ( var i=0; i<stack[id].length; ++i )	score += stack[id][i];
+		io.emit('update', id, queue[id], stack[id]);
+		io.emit('score', id, score);
 	});
 
 	socket.on('pop', (id, container) => {
@@ -85,6 +90,11 @@ io.on('connection', (socket) => {
 			console.dir(queue[id]);
 			console.dir(stack[id]);
 		}
+		var score = 0;
+		for ( var i=0; i<queue[id].length; ++i )	score += queue[id][i];
+		for ( var i=0; i<stack[id].length; ++i )	score += stack[id][i];
+		io.emit('update', id, queue[id], stack[id]);
+		io.emit('score', id, score);
 	});
 
 });
