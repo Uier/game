@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', function() {
 var cur_value, res;
 
 function startRnd() {
-	if ( finish == player && cur_rnd <= 30 ) {
+	if ( finish == player && cur_rnd < 30 ) {
 		console.log('rnd'+String(cur_rnd));
 		$('#rnd' + String(cur_rnd)).css('color', 'white');
 		$('#rnd' + String(cur_rnd)).css('background-color', '#131F37');
@@ -155,8 +155,9 @@ function startRnd() {
 		finish = 0;
 		cur_rnd++;
 		for ( var i=0; i<5; ++i )	used[i] = false;
-	}
-	if ( cur_rnd > 30 ) {
+	} else if ( cur_rnd >= 30 ) {		
+		$('#rnd' + String(cur_rnd)).css('color', 'white');
+		$('#rnd' + String(cur_rnd)).css('background-color', '#131F37');
 		$('#head').text('End');
 		$('#instruction').text('');
 		$('#element').text('');
