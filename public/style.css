@@ -77,8 +77,6 @@ header {
   float: right;
   width: 20%;
   text-align: right;
-  position: relative;
-  top: -40px;
 }
 
 .score {
@@ -119,9 +117,4 @@ header {
 .stack-btn:hover{
   background:#AAF;
   color:black;
-}
-
-#rnd1 {
-  color: black;
-  background-color: yellow;
 }
