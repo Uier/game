@@ -1,4 +1,4 @@
-var userList = ['測試', 'Team1', 'Team2', 'Team3', 'Team4'];
+var userList = ['Team0', 'Team1', 'Team2', 'Team3', 'Team4'];
 var scoreList = ['adminscore', 'team1score', 'team2score', 'team3score', 'team4score'];
 
 function setCookie(name) {
