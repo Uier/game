@@ -5,3 +5,4 @@
 - [x] states btn
 - [ ] users
 - [ ] switch round
+- [ ] distinct random value

@@ -38,8 +38,8 @@ function findName(element) {
 }
 
 var name = checkCookie();
-var cur_rnd = 0, player = 1, finish = 0, used = [false, false, false, false, false];
-var setting = true, data, maximum, onset = true;
+var cur_rnd = 0, player = 2, finish = 0, used = [false, false, false, false, false];
+var setting = true, data, maximum, onset = true, Pcnt = 0
 
 document.addEventListener('DOMContentLoaded', function() {
 	socket.on('setgame', function(operation, max_value) {
@@ -66,9 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	});
 
 	socket.on('startgame', function(amount) {
-		if ( onset ) {
-			finish = amount;
-			onset = false;
+		if ( amount == player ) {
 			startRnd();
 		}
 	});
@@ -111,17 +109,30 @@ document.addEventListener('DOMContentLoaded', function() {
 			$('#stack-arr').text(stack_content);
 		}
 	});
-
-	socket.on('score', function(id, score) {
-		var obj = '#' + scoreList[id];
-		$(obj).text(score);
+	socket.on('score', function(score, vis) {
+		Pcnt = 0;
+		for ( var i=0; i<5; ++i ) {
+			console.log("i, vis: " + i + vis[i]);
+			if ( vis[i] )
+				Pcnt++;
+		}
+		if ( Pcnt >= player ) {
+			for ( var i=0; i<5; ++i ) {	
+				var obj = '#' + scoreList[i];
+				$(obj).text(score[i]);
+			}
+			startRnd();
+			socket.emit('clear');
+			Pcnt = 0;
+		}
 	});
 });
 
 var cur_value, res;
 
 function startRnd() {
-	if ( finish == player && cur_rnd < 30 ) {
+	if ( cur_rnd < 30 ) {
+		finish = 0;
 		console.log('rnd'+String(cur_rnd));
 		$('#rnd' + String(cur_rnd)).css('color', 'white');
 		$('#rnd' + String(cur_rnd)).css('background-color', '#131F37');
@@ -147,15 +158,14 @@ function startRnd() {
 			$('#instruction').text('push ');
 			$('#element').text(String(cur_value) + '.');
 		} else {
-			res = 'o'
+			res = 'o';
 			$('#instruction').text('pop.');
 			$('#element').text('');
 		}
 		console.log(data);
-		finish = 0;
 		cur_rnd++;
 		for ( var i=0; i<5; ++i )	used[i] = false;
-	} else if ( cur_rnd >= 30 ) {		
+	} else if ( cur_rnd >= 30 ) {
 		$('#rnd' + String(cur_rnd)).css('color', 'white');
 		$('#rnd' + String(cur_rnd)).css('background-color', '#131F37');
 		$('#head').text('End');
@@ -163,7 +173,6 @@ function startRnd() {
 		$('#element').text('');
 	}
 }
-
 
 function click_queue() {
 	console.log(name + ' choose queue');
@@ -193,11 +202,10 @@ function click_stack() {
 
 function doMove(id, container) {
 	used[id] = true;
-	finish++;
+	console.log("used[id]=1, id: " + id);
 	if ( res == 'i' ) {
 		socket.emit('push', id, container, cur_value);
 	} else {
 		socket.emit('pop', id, container);
 	}
-	startRnd();
 }

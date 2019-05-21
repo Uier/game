@@ -33,6 +33,11 @@ var stack = [];
 for ( var i=0; i<5; ++i )	queue[i] = [];
 for ( var i=0; i<5; ++i )	stack[i] = [];
 
+var finish = 0;
+var vis = [], score_list = [];
+for ( var i=0; i<5; ++i )	vis[i] = false;
+for ( var i=0; i<5; ++i )	score_list[i] = 0;
+
 io.on('connection', (socket) => {
 	onlineCount++;
 
@@ -48,7 +53,7 @@ io.on('connection', (socket) => {
 	});
 
 	socket.on('check', (id, container) => {
-		console.log('check id: ' + String(id));
+		console.log('check id: ' + id);
 		if ( container == 'q' ) {
 			console.log(queue[id].length);
 			if ( queue[id].length > 0 ) {
@@ -62,39 +67,50 @@ io.on('connection', (socket) => {
 	});
 
 	socket.on('push', (id, container, element) => {
-		console.log('push id: ' + String(id));
-		if ( container == 'q' ) {
-			queue[id].push(element);
-			console.dir(queue[id]);
-			console.dir(stack[id]);
-		} else {
-			stack[id].push(element);
-			console.dir(queue[id]);
-			console.dir(stack[id]);
+		console.log('push id: ' + id);
+		if ( !vis[id] ) {
+			vis[id] = 1;
+			if ( container == 'q' ) {
+				queue[id].push(element);
+				console.dir(queue[id]);
+				console.dir(stack[id]);
+			} else {
+				stack[id].push(element);
+				console.dir(queue[id]);
+				console.dir(stack[id]);
+			}
+			var score = 0;
+			for ( var i=0; i<queue[id].length; ++i )	score += queue[id][i];
+			for ( var i=0; i<stack[id].length; ++i )	score += stack[id][i];
+			score_list[id] = score;
+			io.emit('update', id, queue[id], stack[id]);
+			io.emit('score', score_list, vis);
 		}
-		var score = 0;
-		for ( var i=0; i<queue[id].length; ++i )	score += queue[id][i];
-		for ( var i=0; i<stack[id].length; ++i )	score += stack[id][i];
-		io.emit('update', id, queue[id], stack[id]);
-		io.emit('score', id, score);
 	});
 
 	socket.on('pop', (id, container) => {
-		console.log('pop id: ' + String(id));
-		if ( container == 'q' ) {
-			queue[id].shift();
-			console.dir(queue[id]);
-			console.dir(stack[id]);
-		} else {
-			stack[id].pop();
-			console.dir(queue[id]);
-			console.dir(stack[id]);
+		console.log('pop id: ' + id);
+		if ( !vis[id] ) {
+			vis[id] = 1;
+			if ( container == 'q' ) {
+				queue[id].shift();
+				console.dir(queue[id]);
+				console.dir(stack[id]);
+			} else {
+				stack[id].pop();
+				console.dir(queue[id]);
+				console.dir(stack[id]);
+			}
+			var score = 0;
+			for ( var i=0; i<queue[id].length; ++i )	score += queue[id][i];
+			for ( var i=0; i<stack[id].length; ++i )	score += stack[id][i];
+			score_list[id] = score;
+			io.emit('update', id, queue[id], stack[id]);
+			io.emit('score', score_list, vis);
 		}
-		var score = 0;
-		for ( var i=0; i<queue[id].length; ++i )	score += queue[id][i];
-		for ( var i=0; i<stack[id].length; ++i )	score += stack[id][i];
-		io.emit('update', id, queue[id], stack[id]);
-		io.emit('score', id, score);
 	});
 
+	socket.on('clear', () => {
+		for ( var i=0; i<5; ++i )	vis[i] = 0;
+	});
 });
