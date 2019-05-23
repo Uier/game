@@ -4,5 +4,7 @@
 - [x] cookies
 - [x] states btn
 - [ ] users
-- [ ] switch round
-- [ ] distinct random value
+- [x] switch round
+- [x] distinct random value
+- [ ] issue after refreshing
+- [ ] scoreboard ranking

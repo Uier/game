@@ -1,8 +1,7 @@
 var userList = ['Team0', 'Team1', 'Team2', 'Team3', 'Team4'];
-var scoreList = ['team0score', 'team1score', 'team2score', 'team3score', 'team4score'];
+var scoreList = ['Team0score', 'Team1score', 'Team2score', 'Team3score', 'Team4score'];
 
 function setCookie(name) {
-	// userList.push(name);
 	var cookie = 'username=' + name + ';';
 	document.cookie = cookie;
 }
@@ -29,24 +28,20 @@ function checkCookie() {
 	return user;
 }
 
-function random_value(max_value) {
-	return 1 + Math.floor(Math.random() * max_value);
-}
-
 function findName(element) {
 	return element == name;
 }
 
 var name = checkCookie();
 var cur_rnd = 0, player = 2, finish = 0, used = [false, false, false, false, false];
-var setting = true, data, maximum, onset = true, Pcnt = 0
+var setting = true, data, game_value, Pcnt = 0
 
 document.addEventListener('DOMContentLoaded', function() {
-	socket.on('setgame', function(operation, max_value) {
+	socket.on('setgame', function(operation, value) {
 		if ( setting == true ) {
 			setting = false;
 			data = operation;
-			maximum = max_value;
+			game_value = value;
 		}
 		var round, prefix, suffix, content;
 		for ( var i=0; i<operation.length; ++i ) {
@@ -63,6 +58,12 @@ document.addEventListener('DOMContentLoaded', function() {
 			$('#operation').append(content);
 		}
 		$('#operation').append('<div class="set" id="end">End</div>');
+		var highlight = '#' + scoreList[userList.findIndex(findName)];
+		$(highlight).css('color', 'black');
+		$(highlight).css('background-color', 'grey');
+		highlight = '#' + userList[userList.findIndex(findName)];
+		$(highlight).css('color', 'black');
+		$(highlight).css('background-color', 'grey');
 	});
 
 	socket.on('startgame', function(amount) {
@@ -140,11 +141,11 @@ function startRnd() {
 		$('#rnd' + String(cur_rnd+1)).css('background-color', 'yellow');
 		$('#head').text('Please ');
 		if ( data[cur_rnd] == '?' ) {
-			if ( random_value(2) == 1 ) {
+			if ( game_value[cur_rnd]%2 == 1 ) {
 				res = 'i';
 				$('#rnd' + String(cur_rnd+1)).text('Push');
 				$('#instruction').text('push ');
-				cur_value = random_value(maximum);
+				cur_value = game_value[cur_rnd];
 				$('#element').text(String(cur_value) + '.');
 			} else {
 				res = 'o';
@@ -154,7 +155,7 @@ function startRnd() {
 			}
 		} else if ( data[cur_rnd] == 'i' ) {
 			res = 'i';
-			cur_value = random_value(maximum);
+			cur_value = game_value[cur_rnd];
 			$('#instruction').text('push ');
 			$('#element').text(String(cur_value) + '.');
 		} else {

@@ -22,11 +22,17 @@ server.listen(8888, () => {
 	console.log('Link Start');
 });
 
+function random_value(max_value) {
+	return 1 + Math.floor(Math.random() * max_value);
+}
+
 let onlineCount = 0;
 
 var gameConfig = fs.readFileSync(process.argv[2], 'ascii');
 gameConfig = JSON.parse(gameConfig);
 console.log(gameConfig);
+var value = [];
+for ( var i=0; i<gameConfig[0].length; ++i )	value[i] = random_value(gameConfig[1]);
 
 var queue = [];
 var stack = [];
@@ -43,7 +49,7 @@ io.on('connection', (socket) => {
 
 	io.emit('online', onlineCount);
 
-	io.emit('setgame', gameConfig[0], gameConfig[1]);
+	io.emit('setgame', gameConfig[0], value);
 
 	io.emit('startgame', onlineCount);
 
