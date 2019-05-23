@@ -60,10 +60,10 @@ document.addEventListener('DOMContentLoaded', function() {
 		$('#operation').append('<div class="set" id="end">End</div>');
 		var highlight = '#' + scoreList[userList.findIndex(findName)];
 		$(highlight).css('color', 'black');
-		$(highlight).css('background-color', 'grey');
+		$(highlight).css('background-color', 'yellow');
 		highlight = '#' + userList[userList.findIndex(findName)];
 		$(highlight).css('color', 'black');
-		$(highlight).css('background-color', 'grey');
+		$(highlight).css('background-color', 'yellow');
 	});
 
 	socket.on('startgame', function(amount) {
