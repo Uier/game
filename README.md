@@ -6,5 +6,5 @@
 - [ ] users
 - [x] switch round
 - [x] distinct random value
-- [ ] issue after refreshing
+- [x] issue after refreshing
 - [ ] scoreboard ranking
