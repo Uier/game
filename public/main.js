@@ -1,3 +1,4 @@
+
 var userList = ['Team0', 'Team1', 'Team2', 'Team3', 'Team4'];
 var scoreList = ['Team0score', 'Team1score', 'Team2score', 'Team3score', 'Team4score'];
 
@@ -33,65 +34,100 @@ function findName(element) {
 }
 
 var name = checkCookie();
-var cur_rnd = 0, player = 2, finish = 0, used = [false, false, false, false, false];
-var setting = true, data, game_value, Pcnt = 0
+var player, used = [false, false, false, false, false], data = [], res, init = false;
 
 document.addEventListener('DOMContentLoaded', function() {
-	socket.on('setgame', function(operation, value) {
-		if ( setting == true ) {
-			setting = false;
-			data = operation;
-			game_value = value;
-		}
-		var round, prefix, suffix, content;
-		for ( var i=0; i<operation.length; ++i ) {
-			prefix = '<div class="set" id="rnd' + String(i+1) + '">';
-			suffix = '</div>';
-			if ( operation[i] == 'i' ) {
-				content = prefix + 'Push' + suffix;
-			} else if ( operation[i] == 'o' ) {
-				content = prefix + 'Pop' + suffix;
-			} else {
-				content = prefix + '???' + suffix;
-			}
-			console.log(content);
-			$('#operation').append(content);
-		}
-		$('#operation').append('<div class="set" id="end">End</div>');
-		var highlight = '#' + scoreList[userList.findIndex(findName)];
-		$(highlight).css('color', 'black');
-		$(highlight).css('background-color', 'yellow');
-		highlight = '#' + userList[userList.findIndex(findName)];
-		$(highlight).css('color', 'black');
-		$(highlight).css('background-color', 'yellow');
-	});
-
-	socket.on('startgame', function(amount) {
-		if ( amount == player ) {
-			startRnd();
-		}
-	});
-
-	socket.on('confirm', function(id, container) {
-		doMove(id, container);
-	});
-
 	socket.on('connect', function() {
 		console.log('connected');
 	    $('#status').text('Connected');
 	    $('#username').text(name);
 	});
 
+	socket.on('online', function(amount, operation, origin, vis, plyr) {
+	    $('#online').text(amount);
+	    data[0] = operation;
+	    data[1] = origin;
+	    console.log('data: ' + data);
+		used = vis;
+		player = plyr;
+	});
+
 	socket.on('disconnect', function() {
 	   	$('#status').text('Disconnected');
 	});
 
-	socket.on('online', function(amount) {
-	    $('#online').text(amount);
+	socket.on('setgame', function(Rnd, amount) {
+		if ( init == false ) {
+			init = true;
+			var content;
+			for ( var i=0; i<data[0].length; ++i ) {
+				content = '<div class="set" id="rnd' + String(i+1) + '">';
+				if ( i > Rnd ) {
+					if ( data[1][i] == 'i' )	content += 'Push</div>';
+					else if ( data[1][i] == 'o' )	content += 'Pop</div>'
+					else content += '???</div>';
+				} else {
+					if ( data[0][i] == 'i' )	content += 'Push</div>';
+					else	content += 'Pop</div>';
+				}
+				console.log(content);
+				$('#operation').append(content);
+				$('#rnd' + String(i+1)).css('color', 'white');
+				$('#rnd' + String(i+1)).css('background-color', '#131F37');
+			}
+			$('#operation').append('<div class="set" id="rnd' + String(data[0].length+1) + '">End</div>');
+		}
+		// refresh highlight
+		$('#rnd' + String(Rnd)).css('color', 'black');
+		$('#rnd' + String(Rnd)).css('background-color', 'yellow');
+		// scoreboard highlight
+		var highlight = '#' + scoreList[userList.findIndex(findName)];
+		$(highlight).css('color', 'black');
+		$(highlight).css('background-color', 'yellow');
+		highlight = '#' + userList[userList.findIndex(findName)];
+		$(highlight).css('color', 'black');
+		$(highlight).css('background-color', 'yellow');
+		// start require
+		if ( amount == player && Rnd == 0 )	socket.emit('nextRnd');
+		// refresh
+		if ( Rnd > 0 )	socket.emit('refresh', userList.findIndex(findName));
 	});
 
-	socket.on('update', function(id, queue, stack) {
-		if ( userList[id] == name ) {
+	socket.on('highlight', function(Rnd) {
+		$('#rnd' + String(Rnd)).css('color', 'white');
+		$('#rnd' + String(Rnd)).css('background-color', '#131F37');
+		$('#rnd' + String(Rnd+1)).css('color', 'black');
+		$('#rnd' + String(Rnd+1)).css('background-color', 'yellow');
+	});
+
+	socket.on('setIO', function(Rnd, val, Q) {
+		$('#head').text('Please ');
+		if ( Rnd == 0 )	res = data[1][Rnd];
+		else res = data[0][Rnd];
+		if ( res == 'i' ) {
+			if ( Q == '?' )	$('#rnd' + String(Rnd+1)).text('Push');
+			$('#instruction').text('push ');
+			$('#element').text(val + '.');
+		} else {
+			if ( Q == '?' )	$('#rnd' + String(Rnd+1)).text('Pop');
+			$('#instruction').text('pop.');
+			$('#element').text('');
+		}
+	});
+
+	socket.on('setEND', function() {
+		$('#head').text('End');
+		$('#instruction').text('');
+		$('#element').text('');
+	});
+
+	socket.on('confirm', function(id, container) {
+		doMove(id, container);
+	});
+
+	socket.on('update', function(id, queue, stack, vis) {
+		used = vis;
+		if ( id >= 0 && userList[id] == name ) {
 			var queue_content = '[';
 			if ( queue.length > 0 )	queue_content += String(queue[queue.length-1]);
 			for ( var i=queue.length-2; i>=0; --i ) {
@@ -110,76 +146,27 @@ document.addEventListener('DOMContentLoaded', function() {
 			$('#stack-arr').text(stack_content);
 		}
 	});
-	socket.on('score', function(score, vis) {
-		Pcnt = 0;
-		for ( var i=0; i<5; ++i ) {
-			console.log("i, vis: " + i + vis[i]);
+
+	socket.on('score', function(score, vis, refresh) {
+		var Pcnt = 0;
+		for ( var i=0; i<5; ++i )
 			if ( vis[i] )
 				Pcnt++;
-		}
-		if ( Pcnt >= player ) {
+		if ( Pcnt >= player || refresh ) {
 			for ( var i=0; i<5; ++i ) {	
 				var obj = '#' + scoreList[i];
 				$(obj).text(score[i]);
 			}
-			startRnd();
-			socket.emit('clear');
+			if ( !refresh )	socket.emit('nextRnd');
 			Pcnt = 0;
 		}
 	});
 });
 
-var cur_value, res;
-
-function startRnd() {
-	if ( cur_rnd < 30 ) {
-		finish = 0;
-		console.log('rnd'+String(cur_rnd));
-		$('#rnd' + String(cur_rnd)).css('color', 'white');
-		$('#rnd' + String(cur_rnd)).css('background-color', '#131F37');
-		$('#rnd' + String(cur_rnd+1)).css('color', 'black');
-		$('#rnd' + String(cur_rnd+1)).css('background-color', 'yellow');
-		$('#head').text('Please ');
-		if ( data[cur_rnd] == '?' ) {
-			if ( game_value[cur_rnd]%2 == 1 ) {
-				res = 'i';
-				$('#rnd' + String(cur_rnd+1)).text('Push');
-				$('#instruction').text('push ');
-				cur_value = game_value[cur_rnd];
-				$('#element').text(String(cur_value) + '.');
-			} else {
-				res = 'o';
-				$('#rnd' + String(cur_rnd+1)).text('Pop');
-				$('#instruction').text('pop.');
-				$('#element').text('');
-			}
-		} else if ( data[cur_rnd] == 'i' ) {
-			res = 'i';
-			cur_value = game_value[cur_rnd];
-			$('#instruction').text('push ');
-			$('#element').text(String(cur_value) + '.');
-		} else {
-			res = 'o';
-			$('#instruction').text('pop.');
-			$('#element').text('');
-		}
-		console.log(data);
-		cur_rnd++;
-		for ( var i=0; i<5; ++i )	used[i] = false;
-	} else if ( cur_rnd >= 30 ) {
-		$('#rnd' + String(cur_rnd)).css('color', 'white');
-		$('#rnd' + String(cur_rnd)).css('background-color', '#131F37');
-		$('#head').text('End');
-		$('#instruction').text('');
-		$('#element').text('');
-	}
-}
-
 function click_queue() {
-	console.log(name + ' choose queue');
+	console.log(name + ' click queue');
 	var id = userList.findIndex(findName);
 	if ( id >= 0 && !used[id] ) {
-		console.log('debug: ' + res);
 		if ( res == 'i' ) {
 			doMove(id, 'q');
 		} else {
@@ -189,10 +176,9 @@ function click_queue() {
 }
 
 function click_stack() {
-	console.log(name + ' choose stack');
+	console.log(name + ' click stack');
 	var id = userList.findIndex(findName);
 	if ( id >= 0 && !used[id] ) {
-		console.log('debug: ' + res);
 		if ( res == 'i' ) {
 			doMove(id, 's');
 		} else {
@@ -202,11 +188,11 @@ function click_stack() {
 }
 
 function doMove(id, container) {
-	used[id] = true;
-	console.log("used[id]=1, id: " + id);
 	if ( res == 'i' ) {
-		socket.emit('push', id, container, cur_value);
+		console.log('domove: ' + id + ' push ' + container);
+		socket.emit('push', id, container);
 	} else {
+		console.log('domove: ' + id + ' pop ' + container);
 		socket.emit('pop', id, container);
 	}
 }
