@@ -108,7 +108,7 @@ header {
   border-right-color: #131F37;
 }
 
-.queue-btn, #stack-btn {
+.queue-btn, .stack-btn {
   user-select: none;
   cursor: pointer;
 }

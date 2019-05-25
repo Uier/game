@@ -45,9 +45,11 @@ io.on('connection', (socket) => {
 	});
 
 	socket.on('setname', (name) => {
-		console.log('userList: ' + userList);
-		if ( find(name) == -1 ) userList[cnt++] = name;
-		console.log('userList: ' + userList);
+		if ( find(name) == -1 ) {
+			userList[cnt++] = name;
+			console.log('****new user login: ' + name);
+		}
+		console.log('now online: ' + userList);
 		io.emit('setgame', Rnd, onlineCount, userList, scoreList, record);
 	});
 
