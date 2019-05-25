@@ -22,7 +22,7 @@ server.listen(8888, () => {
 	console.log('Link Start');
 });
 
-var onlineCount = 0, Rnd = 0, finish = 0, cnt = 0;
+var onlineCount = 0, Rnd = 0, finish = 0, cnt = 0, player = process.argv[3];
 var gameConfig = JSON.parse(fs.readFileSync(process.argv[2], 'ascii'));
 var value = [], queue = [], stack = [], vis = [], userList = [], scoreList = [], record = ["", ""];
 for ( var i=0; i<gameConfig[0].length; ++i ) {
@@ -37,7 +37,7 @@ console.log(record);
 io.on('connection', (socket) => {
 	onlineCount++;
 
-	io.emit('online', onlineCount, record, process.argv[3]);
+	io.emit('online', onlineCount, record, player);
 
 	socket.on('disconnect', () => {
 		onlineCount = (onlineCount < 0 ? 0 : onlineCount-1);
@@ -47,23 +47,23 @@ io.on('connection', (socket) => {
 	socket.on('setname', (name) => {
 		if ( find(name) == -1 ) {
 			userList[cnt++] = name;
-			console.log('****new user login: ' + name);
+			console.log('*************************\n', 'new user login: ' + name, '\n*************************');
 		}
 		console.log('now online: ' + userList);
 		io.emit('setgame', Rnd, onlineCount, userList, scoreList, record);
 	});
 
 	socket.on('nextRnd', () => {
-		if ( ++finish == process.argv[3] ) {
+		if ( ++finish == player ) {
 			finish = 0;
-			console.log('============================');
+			console.log('\n\n==================================================');
 			console.log('Round: ' + Rnd);
 			// highlight bar moving
 			io.emit('highlight', Rnd);
 			if ( Rnd < 30 ) {
 				io.emit('setIO', Rnd, value[Rnd], record);
 				Rnd++;
-				for ( var i=0; i<5; ++i )	vis[i] = false;
+				for ( var i=0; i<player; ++i )	vis[i] = false;
 				io.emit('update', -1, [], [], userList);
 			} else	io.emit('setEnd');
 		}
@@ -78,11 +78,11 @@ io.on('connection', (socket) => {
 	socket.on('click', (name, container) => {
 		var id = find(name);
 		if ( container == 'q' ) {
-			console.log('activity: ' + name + ' click queue');
+			console.log('activity: ' + name + ' click queue\n');
 			if ( record[0][Rnd-1] == 'i' )	DoMove(id, 'i', 'q');
 			else if ( queue[id].length > 0 )	DoMove(id, 'o', 'q');
 		} else {
-			console.log('activity: ' + name + ' click stack');
+			console.log('activity: ' + name + ' click stack\n');
 			if ( record[0][Rnd-1] == 'i' )	DoMove(id, 'i', 's');
 			else if ( stack[id].length > 0 )	DoMove(id, 'o', 's');
 		}
@@ -90,7 +90,7 @@ io.on('connection', (socket) => {
 });
 
 function find(x) {
-	for ( var i=0; i<5; ++i )	if ( userList[i] == x )	return i;
+	for ( var i=0; i<player; ++i )	if ( userList[i] == x )	return i;
 	return -1;
 }
 
@@ -104,18 +104,18 @@ function DoMove(id, act, container) {
 		console.dir(vis);
 		if ( act == 'i' ) {
 			if ( container == 'q' ) {
-				console.log('activity: ' + userList[id] + ' push queue');
+				console.log('activity: ' + userList[id] + ' push queue\n');
 				queue[id].push(value[Rnd-1]);
 			} else {
-				console.log('activity: ' + userList[id] + ' push stack');
+				console.log('activity: ' + userList[id] + ' push stack\n');
 				stack[id].push(value[Rnd-1]);
 			}
 		} else {
 			if ( container == 'q' ) {
-				console.log('activity: ' + userList[id] + ' pop queue');
+				console.log('activity: ' + userList[id] + ' pop queue\n');
 				queue[id].shift();
 			} else {
-				console.log('activity: ' + userList[id] + ' pop stack');
+				console.log('activity: ' + userList[id] + ' pop stack\n');
 				stack[id].shift();
 			}
 		}
@@ -125,6 +125,7 @@ function DoMove(id, act, container) {
 		for ( var i=0; i<queue[id].length; ++i )	scoreList[id] += queue[id][i];
 		for ( var i=0; i<stack[id].length; ++i )	scoreList[id] += stack[id][i];
 		io.emit('update', id, queue[id], stack[id], userList);
+		console.dir(vis);
 		io.emit('score', id, scoreList, vis, false);
 	}
 }

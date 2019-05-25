@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		$('#rnd' + String(Rnd)).css('color', 'black');
 		$('#rnd' + String(Rnd)).css('background-color', 'yellow');
 		// update users
-		for ( var i=0; i<5; ++i )	$('#Team' + String(i)).text(userList[i]);
+		for ( var i=0; i<player; ++i )	$('#Team' + String(i)).text(userList[i]);
 		// scoreboard highlight
 		var highlight = '#' + scoreList[userList.findIndex(findName)];
 		$(highlight).css('color', 'black');
@@ -105,11 +105,11 @@ document.addEventListener('DOMContentLoaded', function() {
 		}
 	});
 
-	socket.on('score', function(id, score, vis, refresh) {
+	socket.on('score', function(id, scoreList, vis, refresh) {
 		var Pcnt = 0;
-		for ( var i=0; i<5; ++i )	if ( vis[i] )	Pcnt++;
-		if ( Pcnt >= player || refresh ) {
-			for ( var i=0; i<5; ++i )	$('#score' + String(id)).text(score[i]);
+		for ( var i=0; i<player; ++i )	if ( vis[i] )	Pcnt++;
+		if ( Pcnt == player || refresh ) {
+			for ( var i=0; i<player; ++i )	$('#score' + String(i)).text(scoreList[i]);
 			if ( !refresh )	socket.emit('nextRnd');
 			Pcnt = 0;
 		}
