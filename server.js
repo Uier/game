@@ -1,5 +1,5 @@
-if (process.argv.length !== 4) {
-  	console.log('Usage: node [server] [game configuration (json format)] [the num of player]');
+if ( process.argv.length !== 4 || process.argv[3] > 5 || process.argv[3] < 0 ) {
+  	console.log('Usage: node [server] [game configuration (json format)] [the num of player(0~5)]');
   	console.log('default: node server.js gamedata[0].json');
   	process.exit(1);
 }
@@ -27,35 +27,41 @@ function random_value(max_value) {
 	return 1 + Math.floor(Math.random() * max_value);
 }
 
-var userID = ['TzuWei', 'Team1', 'Team2', 'Team3', 'Team4'];
-var scoreID = ['Team0score', 'Team1score', 'Team2score', 'Team3score', 'Team4score'];
-var onlineCount = 0, Rnd = 0, finish = 0;
+var onlineCount = 0, Rnd = 0, finish = 0, cnt = 0;
 var gameConfig = JSON.parse(fs.readFileSync(process.argv[2], 'ascii'));
-var value = [], queue = [], stack = [], vis = [], score_list = [], record = "";
-for ( var i=0; i<gameConfig[0].length; ++i ) {
+var value = [], queue = [], stack = [], vis = [], userList = [], scoreList = [], record = "";
+for ( var i=0; i<gameConfig[0].length; ++i )
 	if ( gameConfig[0][i] == '?' )	record += (random_value(2) == 1 ? 'i' : 'o');
 	else	record += gameConfig[0][i];
-}
-console.log(gameConfig[0] + ', ' + gameConfig[1]);
-console.log(record);
 for ( var i=0; i<gameConfig[0].length; ++i )	value[i] = random_value(gameConfig[1]);
-for ( var i=0; i<5; ++i ) {queue[i] = [];stack[i] = [];vis[i] = false;score_list[i] = 0;}
+for ( var i=0; i<5; ++i ) {queue[i] = [];stack[i] = [];vis[i] = false;userList[i] = "loading...";scoreList[i] = 0;}
+console.log(gameConfig[0] + ', ' + gameConfig[1] + '\n' + record);
+
+function find(x) {
+	for ( var i=0; i<5; ++i )	if ( userList[i] == x )	return i;
+	return -1;
+}
 
 io.on('connection', (socket) => {
 	onlineCount++;
 
-	io.emit('online', onlineCount, record, gameConfig[0], vis, process.argv[3], userID, scoreID);
+	io.emit('online', onlineCount, record, gameConfig[0], vis, process.argv[3]);
 
 	socket.on('disconnect', () => {
 		onlineCount = (onlineCount < 0 ? 0 : onlineCount-1);
 		io.emit('online', onlineCount);
 	});
 
-	io.emit('setgame', Rnd, onlineCount);
+	socket.on('setname', (name) => {
+		console.log('cnt, userList: ' + cnt + ', ' + userList);
+		if ( find(name) == -1 ) userList[cnt++] = name;
+		console.log('cnt, userList: ' + cnt + ', ' + userList);
+	});
+
+	io.emit('setgame', Rnd, onlineCount, userList, scoreList);
 
 	socket.on('nextRnd', () => {
-		finish++;
-		if ( finish == process.argv[3] ) {
+		if ( ++finish == process.argv[3] ) {
 			finish = 0;
 			console.log('Round: ' + Rnd);
 			// highlight bar moving
@@ -71,69 +77,50 @@ io.on('connection', (socket) => {
 
 	socket.on('refresh', (id) => {
 		io.emit('setIO', Rnd-1, value[Rnd-1], false);
-		io.emit('update', id, queue[id], stack[id], vis);
-		io.emit('score', score_list, vis, true);
+		io.emit('update', id, queue[id], stack[id], vis, userList);
+		io.emit('score', scoreList, vis, true);
 	});
 
-	socket.on('check', (id, container) => {
-		console.log('activity: ' + id + ' checking ' + container);
+	socket.on('click', (name, container) => {
+		var id = find(name);
 		if ( container == 'q' ) {
-			console.log(queue[id].length);
-			if ( queue[id].length > 0 ) {
-				io.emit('confirm', id, container);
-			}
+			console.log('activity: ' + name + ' click queue');
+			if ( record[Rnd] == 'i' )	DoMove(id, 'i', 'q');
+			else if ( queue[id].length > 0 )	DoMove(id, 'o', 'q');
 		} else {
-			if ( stack[id].length > 0 ) {
-				io.emit('confirm', id, container);
-			}
-		}
-	});
-
-	socket.on('push', (id, container) => {
-		console.log('activity: ' + id + ' click ' + container);
-		if ( !vis[id] ) {
-			vis[id] = 1;
-			if ( container == 'q' ) {
-				console.log('activity: ' + id + ' push queue');
-				queue[id].push(value[Rnd-1]);
-				console.dir(queue[id]);
-				console.dir(stack[id]);
-			} else {
-				console.log('activity: ' + id + ' push stack');
-				stack[id].push(value[Rnd-1]);
-				console.dir(queue[id]);
-				console.dir(stack[id]);
-			}
-			var score = 0;
-			for ( var i=0; i<queue[id].length; ++i )	score += queue[id][i];
-			for ( var i=0; i<stack[id].length; ++i )	score += stack[id][i];
-			score_list[id] = score;
-			io.emit('update', id, queue[id], stack[id], vis);
-			io.emit('score', score_list, vis, false);
-		}
-	});
-
-	socket.on('pop', (id, container) => {
-		console.log('activity: ' + id + ' click ' + container);
-		if ( !vis[id] ) {
-			vis[id] = 1;
-			if ( container == 'q' ) {
-				console.log('activity: ' + id + ' pop queue');
-				queue[id].shift();
-				console.dir(queue[id]);
-				console.dir(stack[id]);
-			} else {
-				console.log('activity: ' + id + ' pop stack');
-				stack[id].pop();
-				console.dir(queue[id]);
-				console.dir(stack[id]);
-			}
-			var score = 0;
-			for ( var i=0; i<queue[id].length; ++i )	score += queue[id][i];
-			for ( var i=0; i<stack[id].length; ++i )	score += stack[id][i];
-			score_list[id] = score;
-			io.emit('update', id, queue[id], stack[id], vis);
-			io.emit('score', score_list, vis, false);
+			console.log('activity: ' + name + ' click stack');
+			if ( record[Rnd] == 'i' )	DoMove(id, 'i', 's');
+			else if ( queue[id].length > 0 )	DoMove(id, 'o', 's');
 		}
 	});
 });
+
+function DoMove(id, act, container) {
+	if ( id >= 0 && !vis[id] ) {
+		vis[id] = 1;
+		if ( act == 'i' ) {
+			if ( container == 'q' ) {
+				console.log('activity: ' + userList[id] + ' push queue');
+				queue[id].push(value[Rnd-1]);
+			} else {
+				console.log('activity: ' + userList[id] + ' push stack');
+				stack[id].push(value[Rnd-1]);
+			}
+		} else {
+			if ( container == 'q' ) {
+				console.log('activity: ' + userList[id] + ' pop queue');
+				queue[id].shift();
+			} else {
+				console.log('activity: ' + userList[id] + ' pop stack');
+				stack[id].shift();
+			}
+		}
+		console.dir(queue[id]);
+		console.dir(stack[id]);
+		scoreList[id] = 0;
+		for ( var i=0; i<queue[id].length; ++i )	scoreList[id] += queue[id][i];
+		for ( var i=0; i<stack[id].length; ++i )	scoreList[id] += stack[id][i];
+		io.emit('update', id, queue[id], stack[id], vis, userList);
+		io.emit('score', id, scoreList, vis, false);
+	}
+}
