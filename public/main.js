@@ -109,10 +109,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		var Pcnt = 0;
 		for ( var i=0; i<5; ++i )	if ( vis[i] )	Pcnt++;
 		if ( Pcnt >= player || refresh ) {
-			for ( var i=0; i<5; ++i ) {
-				var obj = '#score' + String(id);
-				$(obj).text(score[i]);
-			}
+			for ( var i=0; i<5; ++i )	$('#score' + String(id)).text(score[i]);
 			if ( !refresh )	socket.emit('nextRnd');
 			Pcnt = 0;
 		}

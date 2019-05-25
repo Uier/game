@@ -72,7 +72,7 @@ io.on('connection', (socket) => {
 	socket.on('refresh', (id) => {
 		io.emit('setIO', Rnd-1, value[Rnd-1], record);
 		io.emit('update', id, queue[id], stack[id], userList);
-		io.emit('score', scoreList, vis, true);
+		io.emit('score', id, scoreList, vis, true);
 	});
 
 	socket.on('click', (name, container) => {

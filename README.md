@@ -3,7 +3,8 @@
 - [x] score
 - [x] cookies
 - [x] states btn
-- [ ] users
+- [x] users login
+- [ ] users logout
 - [x] switch round
 - [x] distinct random value
 - [x] issue after refreshing
