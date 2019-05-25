@@ -31,7 +31,7 @@ for ( var i=0; i<gameConfig[0].length; ++i ) {
 	record[1] += gameConfig[0][i];
 }
 for ( var i=0; i<gameConfig[0].length; ++i )	value[i] = random_value(gameConfig[1]);
-for ( var i=0; i<5; ++i ) {queue[i] = [];stack[i] = [];vis[i] = false;userList[i] = "loading...";scoreList[i] = 0;}
+for ( var i=0; i<5; ++i ) {queue[i] = [];stack[i] = [];vis[i] = false;userList[i] = "[empty seat]";scoreList[i] = 0;}
 console.log(record);
 
 io.on('connection', (socket) => {
@@ -48,8 +48,7 @@ io.on('connection', (socket) => {
 		if ( find(name) == -1 ) {
 			userList[cnt++] = name;
 			console.log('\n*************************\n', 'new user login: ' + name, '\n*************************\n');
-		} else	console.log('\nnew user login: ' + name + '\n');
-		console.log('\nnow online: ' + userList + '\n');
+		} else	console.log('\nuser login: ' + name + '\n' + '\nnow online: ' + userList + '\n');
 		if ( cnt <= player ) io.emit('setgame', Rnd, onlineCount, userList, scoreList, record);
 	});
 
