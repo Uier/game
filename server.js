@@ -27,27 +27,24 @@ function random_value(max_value) {
 	return 1 + Math.floor(Math.random() * max_value);
 }
 
+var userID = ['TzuWei', 'Team1', 'Team2', 'Team3', 'Team4'];
+var scoreID = ['Team0score', 'Team1score', 'Team2score', 'Team3score', 'Team4score'];
 var onlineCount = 0, Rnd = 0, finish = 0;
 var gameConfig = JSON.parse(fs.readFileSync(process.argv[2], 'ascii'));
-console.log(gameConfig);
 var value = [], queue = [], stack = [], vis = [], score_list = [], record = "";
 for ( var i=0; i<gameConfig[0].length; ++i ) {
-	if ( gameConfig[0][i] == '?' )
-		record += (random_value(2) == 1 ? 'i' : 'o');
-	else
-		record += gameConfig[0][i];
+	if ( gameConfig[0][i] == '?' )	record += (random_value(2) == 1 ? 'i' : 'o');
+	else	record += gameConfig[0][i];
 }
+console.log(gameConfig[0] + ', ' + gameConfig[1]);
 console.log(record);
 for ( var i=0; i<gameConfig[0].length; ++i )	value[i] = random_value(gameConfig[1]);
-for ( var i=0; i<5; ++i )	queue[i] = [];
-for ( var i=0; i<5; ++i )	stack[i] = [];
-for ( var i=0; i<5; ++i )	vis[i] = false;
-for ( var i=0; i<5; ++i )	score_list[i] = 0;
+for ( var i=0; i<5; ++i ) {queue[i] = [];stack[i] = [];vis[i] = false;score_list[i] = 0;}
 
 io.on('connection', (socket) => {
 	onlineCount++;
 
-	io.emit('online', onlineCount, record, gameConfig[0], vis, process.argv[3]);
+	io.emit('online', onlineCount, record, gameConfig[0], vis, process.argv[3], userID, scoreID);
 
 	socket.on('disconnect', () => {
 		onlineCount = (onlineCount < 0 ? 0 : onlineCount-1);

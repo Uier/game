@@ -1,13 +1,13 @@
 @import url('https://fonts.googleapis.com/css?family=Merriweather:400,700');
 @import url('https://fonts.googleapis.com/css?family=Roboto+Mono');
+@import url('https://fonts.googleapis.com/css?family=PT+Mono&display=swap');
 
 body {
   background-color: #364156;
   padding: 5px 25px 25px 25px;
   margin: 0px;
   color: #fff;
-  font-family: "Roboto Mono", monospace;
-  height: auto;
+  font-family: "PT Mono", "Roboto Mono", monospace;
 }
 
 h1 {
@@ -37,6 +37,7 @@ header {
 
 .set {
   background-color: #131F37;
+  padding-top: 4px;
   padding-left: 10px;
   display: block;
   overflow: hidden;
@@ -60,6 +61,7 @@ header {
   width: 100%;
   display: inline;
   white-space: pre-wrap;
+  margin-top: 10px;
   padding-left: 20px;
 }
 
@@ -70,13 +72,14 @@ header {
   width: 100%;
   display: inline;
   white-space: pre-wrap;
+  margin-top: 10px;
   padding-left: 20px;
 }
 
 .score-container {
   float: right;
   width: 20%;
-  text-align: right;
+  font-size: 0px; /*clear top space*/
 }
 
 .score {
@@ -84,7 +87,8 @@ header {
   border-collapse: collapse;
   border: 0px solid #FFC9D8;
   border-color: #FFC9D8;
-  font-size: 20px;
+  text-align: right;
+  font-size: 18px;
   background-color: #131F37;
 }
 

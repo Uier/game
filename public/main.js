@@ -1,7 +1,3 @@
-
-var userList = ['Team0', 'Team1', 'Team2', 'Team3', 'Team4'];
-var scoreList = ['Team0score', 'Team1score', 'Team2score', 'Team3score', 'Team4score'];
-
 function setCookie(name) {
 	var cookie = 'username=' + name + ';';
 	document.cookie = cookie;
@@ -33,7 +29,7 @@ function findName(element) {
 	return element == name;
 }
 
-var name = checkCookie();
+var name = checkCookie(), userList, scoreList;
 var player, used = [false, false, false, false, false], data = [], res, init = false;
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -43,13 +39,15 @@ document.addEventListener('DOMContentLoaded', function() {
 	    $('#username').text(name);
 	});
 
-	socket.on('online', function(amount, operation, origin, vis, plyr) {
+	socket.on('online', function(amount, operation, origin, vis, plyr, userID, scoreID) {
 	    $('#online').text(amount);
 	    data[0] = operation;
 	    data[1] = origin;
 	    console.log('data: ' + data);
 		used = vis;
 		player = plyr;
+		userList = userID;
+		scoreList = scoreID;
 	});
 
 	socket.on('disconnect', function() {
