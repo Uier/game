@@ -40,8 +40,8 @@ io.on('connection', (socket) => {
 	io.emit('online', onlineCount, record, player);
 
 	socket.on('disconnect', () => {
-		onlineCount = (onlineCount < 0 ? 0 : onlineCount-1);
-		io.emit('online', onlineCount);
+		onlineCount -= 1;
+		io.emit('online', (onlineCount < 0 ? 0 : onlineCount));
 	});
 
 	socket.on('setname', (name) => {
@@ -56,8 +56,6 @@ io.on('connection', (socket) => {
 	socket.on('nextRnd', () => {
 		if ( ++finish == player ) {
 			finish = 0;
-			console.log('\n\n==================================================');
-			console.log('Round: ' + Rnd);
 			// highlight bar moving
 			io.emit('highlight', Rnd);
 			if ( Rnd < 30 ) {
@@ -65,9 +63,12 @@ io.on('connection', (socket) => {
 				Rnd++;
 				for ( var i=0; i<player; ++i )	vis[i] = false;
 				io.emit('update', -1, [], [], userList);
+				console.log('\n\n==================================================');
+				console.log('Round: ' + Rnd);
 			} else {
 				Rnd = 31;
 				io.emit('setEnd');
+				console.log('\nEND\n');
 			}
 		}
 	});

@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	});
 
 	socket.on('online', function(amount, data, plyr) {
-	    $('#online').text(amount);
+	    $('#online').text((amount > plyr ? plyr : amount));
 	    data[0] = operation;
 	    data[1] = origin;
 		player = plyr;
