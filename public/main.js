@@ -1,4 +1,4 @@
-var name, player, init = false, used = [false, false, false, false, false], data = [];
+var name, player, init = false;
 
 document.addEventListener('DOMContentLoaded', function() {
 	socket.on('connect', function() {
@@ -8,12 +8,10 @@ document.addEventListener('DOMContentLoaded', function() {
 	    $('#username').text(name);
 	});
 
-	socket.on('online', function(amount, operation, origin, vis, plyr) {
+	socket.on('online', function(amount, data, plyr) {
 	    $('#online').text(amount);
 	    data[0] = operation;
 	    data[1] = origin;
-	    console.log('data: ' + data);
-		used = vis;
 		player = plyr;
 	});
 
@@ -21,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	   	$('#status').text('Disconnected');
 	});
 
-	socket.on('setgame', function(Rnd, amount, userList, scoreList) {
+	socket.on('setgame', function(Rnd, amount, userList, scoreList, data) {
 		// allocate instructions
 		if ( init == false ) {
 			init = true;
@@ -46,7 +44,6 @@ document.addEventListener('DOMContentLoaded', function() {
 		$('#rnd' + String(Rnd)).css('color', 'black');
 		$('#rnd' + String(Rnd)).css('background-color', 'yellow');
 		// update users
-		console.log(userList);
 		for ( var i=0; i<5; ++i )	$('#Team' + String(i)).text(userList[i]);
 		// scoreboard highlight
 		var highlight = '#' + scoreList[userList.findIndex(findName)];
@@ -68,28 +65,26 @@ document.addEventListener('DOMContentLoaded', function() {
 		$('#rnd' + String(Rnd+1)).css('background-color', 'yellow');
 	});
 
-	socket.on('setIO', function(Rnd, val, Q) {
+	socket.on('setIO', function(Rnd, val, data) {
 		$('#head').text('Please ');
 		if ( data[Number(Rnd==0)][Rnd] == 'i' ) {
-			if ( Q == '?' )	$('#rnd' + String(Rnd+1)).text('Push');
+			if ( data[1][Rnd] == '?' )	$('#rnd' + String(Rnd+1)).text('Push');
 			$('#instruction').text('push ');
 			$('#element').text(val + '.');
 		} else {
-			if ( Q == '?' )	$('#rnd' + String(Rnd+1)).text('Pop');
+			if ( data[1][Rnd] == '?' )	$('#rnd' + String(Rnd+1)).text('Pop');
 			$('#instruction').text('pop.');
 			$('#element').text('');
 		}
 	});
 
-	socket.on('setEND', function() {
+	socket.on('setEnd', function() {
 		$('#head').text('End');
 		$('#instruction').text('');
 		$('#element').text('');
 	});
 
-	socket.on('update', function(id, queue, stack, vis, userList) {
-		used = vis;
-		console.log('update id userList[id] name: ', id, userList[id], name);
+	socket.on('update', function(id, queue, stack, userList) {
 		if ( id >= 0 && userList[id] == name ) {
 			var queue_content = '[';
 			if ( queue.length > 0 )	queue_content += String(queue[queue.length-1]);
@@ -114,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		var Pcnt = 0;
 		for ( var i=0; i<5; ++i )	if ( vis[i] )	Pcnt++;
 		if ( Pcnt >= player || refresh ) {
-			for ( var i=0; i<5; ++i ) {	
+			for ( var i=0; i<5; ++i ) {
 				var obj = '#score' + String(id);
 				$(obj).text(score[i]);
 			}
