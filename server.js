@@ -37,7 +37,7 @@ console.log(record);
 io.on('connection', (socket) => {
 	onlineCount++;
 
-	io.emit('online', onlineCount, record, player);
+	io.emit('online', onlineCount, player);
 
 	socket.on('disconnect', () => {
 		onlineCount -= 1;
@@ -50,7 +50,7 @@ io.on('connection', (socket) => {
 			console.log('\n*************************\n', 'new user login: ' + name, '\n*************************\n');
 		} else	console.log('\nnew user login: ' + name + '\n');
 		console.log('\nnow online: ' + userList + '\n');
-		io.emit('setgame', Rnd, onlineCount, userList, scoreList, record);
+		if ( cnt <= player ) io.emit('setgame', Rnd, onlineCount, userList, scoreList, record);
 	});
 
 	socket.on('nextRnd', () => {

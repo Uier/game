@@ -8,10 +8,8 @@ document.addEventListener('DOMContentLoaded', function() {
 	    $('#username').text(name);
 	});
 
-	socket.on('online', function(amount, data, plyr) {
+	socket.on('online', function(amount, plyr) {
 	    $('#online').text((amount > plyr ? plyr : amount));
-	    data[0] = operation;
-	    data[1] = origin;
 		player = plyr;
 	});
 
@@ -67,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	socket.on('setIO', function(Rnd, val, data) {
 		$('#head').text('Please ');
-		if ( data[Number(Rnd==0)][Rnd] == 'i' ) {
+		if ( data[0][Rnd] == 'i' ) {
 			if ( data[1][Rnd] == '?' )	$('#rnd' + String(Rnd+1)).text('Push');
 			$('#instruction').text('push ');
 			$('#element').text(val + '.');
