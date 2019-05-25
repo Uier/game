@@ -47,9 +47,9 @@ io.on('connection', (socket) => {
 	socket.on('setname', (name) => {
 		if ( find(name) == -1 ) {
 			userList[cnt++] = name;
-			console.log('*************************\n', 'new user login: ' + name, '\n*************************');
-		}
-		console.log('now online: ' + userList);
+			console.log('\n*************************\n', 'new user login: ' + name, '\n*************************\n');
+		} else	console.log('\nnew user login: ' + name + '\n');
+		console.log('\nnow online: ' + userList + '\n');
 		io.emit('setgame', Rnd, onlineCount, userList, scoreList, record);
 	});
 
@@ -65,7 +65,10 @@ io.on('connection', (socket) => {
 				Rnd++;
 				for ( var i=0; i<player; ++i )	vis[i] = false;
 				io.emit('update', -1, [], [], userList);
-			} else	io.emit('setEnd');
+			} else {
+				Rnd = 31;
+				io.emit('setEnd');
+			}
 		}
 	});
 
@@ -116,7 +119,7 @@ function DoMove(id, act, container) {
 				queue[id].shift();
 			} else {
 				console.log('activity: ' + userList[id] + ' pop stack\n');
-				stack[id].shift();
+				stack[id].pop();
 			}
 		}
 		console.dir(queue[id]);
