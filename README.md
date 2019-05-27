@@ -1,11 +1,24 @@
 ## game for NTNU CSIE summer camp
-- [x] operations
-- [x] score
+
+### Usage: 
+```
+node server.js [game configuration (json format)] [the number of player(0~5)]
+```
+
+## Todo List
+- [x] operations presenting
+- [x] score display
 - [x] cookies
-- [x] states btn
+- [x] adding states btn
 - [x] users login
 - [ ] users logout
-- [x] switch round
-- [x] distinct random value
-- [x] issue after refreshing
-- [ ] scoreboard ranking
+- [x] switch to next round
+- [x] bug: distinct random value in different user
+- [x] bug: issues after refreshing
+- [ ] scoreboard with ranking
+- [ ] difficulty adjustment
+- [ ] remove hard code
+
+### others
+developer: TzuWei Yu
+game idea came from NTU DSA 2019

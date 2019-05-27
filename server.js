@@ -1,6 +1,5 @@
 if ( process.argv.length !== 4 || process.argv[3] > 5 || process.argv[3] < 0 ) {
   	console.log('Usage: node [server] [game configuration (json format)] [the num of player(0~5)]');
-  	console.log('default: node server.js gamedata[0].json');
   	process.exit(1);
 }
 
@@ -31,7 +30,7 @@ for ( var i=0; i<gameConfig[0].length; ++i ) {
 	record[1] += gameConfig[0][i];
 }
 for ( var i=0; i<gameConfig[0].length; ++i )	value[i] = random_value(gameConfig[1]);
-for ( var i=0; i<5; ++i ) {queue[i] = [];stack[i] = [];vis[i] = false;userList[i] = "[empty seat]";scoreList[i] = 0;}
+for ( var i=0; i<player; ++i ) {queue[i] = [];stack[i] = [];vis[i] = false;userList[i] = "loading...";scoreList[i] = 0;}
 console.log(record);
 
 io.on('connection', (socket) => {
@@ -57,7 +56,7 @@ io.on('connection', (socket) => {
 			finish = 0;
 			// highlight bar moving
 			io.emit('highlight', Rnd);
-			if ( Rnd < 30 ) {
+			if ( Rnd < record.length ) {
 				io.emit('setIO', Rnd, value[Rnd], record);
 				Rnd++;
 				for ( var i=0; i<player; ++i )	vis[i] = false;

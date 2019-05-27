@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		if ( init == false ) {
 			init = true;
 			for ( var i=0; i<data[0].length; ++i ) {
-				var content = '<div class="set" id="rnd' + String(i+1) + '">';
+				var content = '<div class="set" id="rnd' + (i+1) + '">';
 				if ( i > Rnd ) {
 					if ( data[1][i] == 'i' )	content += 'Push</div>';
 					else if ( data[1][i] == 'o' )	content += 'Pop</div>'
@@ -33,16 +33,16 @@ document.addEventListener('DOMContentLoaded', function() {
 				}
 				console.log(content);
 				$('#operation').append(content);
-				$('#rnd' + String(i+1)).css('color', 'white');
-				$('#rnd' + String(i+1)).css('background-color', '#131F37');
+				$('#rnd' + (i+1)).css('color', 'white');
+				$('#rnd' + (i+1)).css('background-color', '#131F37');
 			}
-			$('#operation').append('<div class="set" id="rnd' + String(data[0].length+1) + '">End</div>');
+			$('#operation').append('<div class="set" id="rnd' + (data[0].length+1) + '">End</div>');
 		}
 		// refresh highlight
-		$('#rnd' + String(Rnd)).css('color', 'black');
-		$('#rnd' + String(Rnd)).css('background-color', 'yellow');
+		$('#rnd' + Rnd).css('color', 'black');
+		$('#rnd' + Rnd).css('background-color', 'yellow');
 		// update users
-		for ( var i=0; i<player; ++i )	$('#Team' + String(i)).text(userList[i]);
+		for ( var i=0; i<player; ++i )	$('#Team' + i).text(userList[i]);
 		// scoreboard highlight
 		var highlight = '#' + scoreList[userList.findIndex(findName)];
 		$(highlight).css('color', 'black');
@@ -57,20 +57,20 @@ document.addEventListener('DOMContentLoaded', function() {
 	});
 
 	socket.on('highlight', function(Rnd) {
-		$('#rnd' + String(Rnd)).css('color', 'white');
-		$('#rnd' + String(Rnd)).css('background-color', '#131F37');
-		$('#rnd' + String(Rnd+1)).css('color', 'black');
-		$('#rnd' + String(Rnd+1)).css('background-color', 'yellow');
+		$('#rnd' + Rnd).css('color', 'white');
+		$('#rnd' + Rnd).css('background-color', '#131F37');
+		$('#rnd' + (Rnd+1)).css('color', 'black');
+		$('#rnd' + (Rnd+1)).css('background-color', 'yellow');
 	});
 
 	socket.on('setIO', function(Rnd, val, data) {
 		$('#head').text('Please ');
 		if ( data[0][Rnd] == 'i' ) {
-			if ( data[1][Rnd] == '?' )	$('#rnd' + String(Rnd+1)).text('Push');
+			if ( data[1][Rnd] == '?' )	$('#rnd' + (Rnd+1)).text('Push');
 			$('#instruction').text('push ');
 			$('#element').text(val + '.');
 		} else {
-			if ( data[1][Rnd] == '?' )	$('#rnd' + String(Rnd+1)).text('Pop');
+			if ( data[1][Rnd] == '?' )	$('#rnd' + (Rnd+1)).text('Pop');
 			$('#instruction').text('pop.');
 			$('#element').text('');
 		}
@@ -85,17 +85,17 @@ document.addEventListener('DOMContentLoaded', function() {
 	socket.on('update', function(id, queue, stack, userList) {
 		if ( id >= 0 && userList[id] == name ) {
 			var queue_content = '[';
-			if ( queue.length > 0 )	queue_content += String(queue[queue.length-1]);
+			if ( queue.length > 0 )	queue_content += queue[queue.length-1];
 			for ( var i=queue.length-2; i>=0; --i ) {
 				queue_content += ', ';
-				queue_content += String(queue[i]);
+				queue_content += queue[i];
 			}
 			queue_content += ']';
 			var stack_content = '[';
-			if ( stack.length > 0 )	stack_content += String(stack[stack.length-1]);
+			if ( stack.length > 0 )	stack_content += stack[stack.length-1];
 			for ( var i=stack.length-2; i>=0; --i ) {
 				stack_content += ', ';
-				stack_content += String(stack[i]);
+				stack_content += stack[i];
 			}
 			stack_content += ']';
 			$('#queue-arr').text(queue_content);
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		var Pcnt = 0;
 		for ( var i=0; i<player; ++i )	if ( vis[i] )	Pcnt++;
 		if ( Pcnt == player || refresh ) {
-			for ( var i=0; i<player; ++i )	$('#score' + String(i)).text(scoreList[i]);
+			for ( var i=0; i<player; ++i )	$('#score' + i).text(scoreList[i]);
 			if ( !refresh )	socket.emit('nextRnd');
 			Pcnt = 0;
 		}
