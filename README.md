@@ -20,5 +20,5 @@ node server.js [game configuration (json format)] [the number of player(0~5)]
 - [ ] remove hard code
 
 ### others
-developer: TzuWei Yu
+developer: TzuWei Yu  
 game idea came from NTU DSA 2019
