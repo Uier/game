@@ -103,6 +103,7 @@ function random_value(max_value) {
 function DoMove(id, act, container) {
 	if ( id >= 0 && !vis[id] ) {
 		vis[id] = 1;
+		console.log('click states: ');
 		console.dir(vis);
 		if ( act == 'i' ) {
 			if ( container == 'q' ) {

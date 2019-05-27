@@ -16,9 +16,11 @@ node server.js [game configuration (json format)] [the number of player(0~5)]
 - [x] bug: distinct random value in different user
 - [x] bug: issues after refreshing
 - [ ] scoreboard with ranking
-- [ ] difficulty adjustment
+- [x] difficulty adjustment
 - [x] remove hard code
-- [ ] vulnerabilities
+- [x] vulnerabilities
+- [ ] variable space for overflow stack queue
+- [ ] more game data
 
 ### others
 developer: TzuWei Yu  
