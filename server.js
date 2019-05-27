@@ -56,7 +56,7 @@ io.on('connection', (socket) => {
 			finish = 0;
 			// highlight bar moving
 			io.emit('highlight', Rnd);
-			if ( Rnd < record.length ) {
+			if ( Rnd < gameConfig[0].length ) {
 				io.emit('setIO', Rnd, value[Rnd], record);
 				Rnd++;
 				for ( var i=0; i<player; ++i )	vis[i] = false;

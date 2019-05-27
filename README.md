@@ -17,7 +17,8 @@ node server.js [game configuration (json format)] [the number of player(0~5)]
 - [x] bug: issues after refreshing
 - [ ] scoreboard with ranking
 - [ ] difficulty adjustment
-- [ ] remove hard code
+- [x] remove hard code
+- [ ] vulnerabilities
 
 ### others
 developer: TzuWei Yu  
