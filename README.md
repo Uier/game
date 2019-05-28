@@ -15,7 +15,7 @@ node server.js [game configuration (json format)] [the number of player(0~5)]
 - [x] switch to next round
 - [x] bug: distinct random value in different user
 - [x] bug: issues after refreshing
-- [ ] scoreboard with ranking
+- [ ] ranking animation
 - [x] difficulty adjustment
 - [x] remove hard code
 - [x] vulnerabilities
