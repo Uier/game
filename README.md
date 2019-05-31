@@ -21,6 +21,7 @@ node server.js [game configuration (json format)] [the number of player(0~5)]
 - [x] vulnerabilities
 - [ ] variable space for overflow stack queue
 - [ ] more game data
+- [ ] bug: restart server then skip first round
 
 ### others
 developer: TzuWei Yu  

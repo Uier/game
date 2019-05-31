@@ -44,12 +44,12 @@ document.addEventListener('DOMContentLoaded', function() {
 		// update users
 		for ( var i=0; i<player; ++i )	$('#Team' + i).text(userList[i]);
 		// scoreboard highlight
-		var highlight = '#' + scoreList[userList.findIndex(findName)];
-		$(highlight).css('color', 'black');
-		$(highlight).css('background-color', 'yellow');
-		highlight = '#' + userList[userList.findIndex(findName)];
-		$(highlight).css('color', 'black');
-		$(highlight).css('background-color', 'yellow');
+			// var highlight = '#' + scoreList[userList.findIndex(findName)];
+			// $(highlight).css('color', 'black');
+			// $(highlight).css('background-color', 'yellow');
+			// highlight = '#' + userList[userList.findIndex(findName)];
+			// $(highlight).css('color', 'black');
+			// $(highlight).css('background-color', 'yellow');
 		// start require
 		if ( amount == player && Rnd == 0 )	socket.emit('nextRnd');
 		// refresh
@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			if ( data[1][Rnd] == '?' )	$('#rnd' + (Rnd+1)).text('Pop');
 			$('#instruction').text('pop.');
 			$('#element').text('');
-		}
+		}	
 	});
 
 	socket.on('setEnd', function() {
@@ -109,6 +109,8 @@ document.addEventListener('DOMContentLoaded', function() {
 		if ( Pcnt == player || refresh ) {
 			for ( var i=0; i<player; ++i )	$('#score' + i).text(scoreList[i]);
 			if ( !refresh )	socket.emit('nextRnd');
+			$('#teshi').trigger('click');
+			$('#table').trigger('click');
 			Pcnt = 0;
 		}
 	});

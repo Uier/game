@@ -103,8 +103,7 @@ function random_value(max_value) {
 function DoMove(id, act, container) {
 	if ( id >= 0 && !vis[id] ) {
 		vis[id] = 1;
-		console.log('click states: ');
-		console.dir(vis);
+		console.log('click states: ' + vis);
 		if ( act == 'i' ) {
 			if ( container == 'q' ) {
 				console.log('activity: ' + userList[id] + ' push queue\n');
@@ -128,7 +127,6 @@ function DoMove(id, act, container) {
 		for ( var i=0; i<queue[id].length; ++i )	scoreList[id] += queue[id][i];
 		for ( var i=0; i<stack[id].length; ++i )	scoreList[id] += stack[id][i];
 		io.emit('update', id, queue[id], stack[id], userList);
-		console.dir(vis);
 		io.emit('score', id, scoreList, vis, false);
 	}
 }
