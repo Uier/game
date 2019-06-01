@@ -51,7 +51,12 @@ document.addEventListener('DOMContentLoaded', function() {
 		$(highlight).css('color', 'black');
 		$(highlight).css('background-color', 'yellow');
 		// start require
-		if ( amount == player && Rnd == 0 )	socket.emit('nextRnd');
+		if ( amount == player && Rnd == 0 ) {
+			socket.emit('nextRnd');
+			var waiting_msg = 'waiting for:';
+			for ( var i=0; i<player; ++i )	waiting_msg += ' ' + userList[i];
+			$('#tail').text(waiting_msg, '連我阿嬤都按得比你快');
+		}
 		// refresh
 		if ( Rnd > 0 )	socket.emit('refresh', userList.findIndex(findName));
 	});
@@ -82,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		$('#element').text('');
 	});
 
-	socket.on('update', function(id, queue, stack, userList) {
+	socket.on('update', function(id, queue, stack, userList, vis) {
 		if ( id >= 0 && userList[id] == name ) {
 			var queue_content = '[';
 			if ( queue.length > 0 )	queue_content += queue[queue.length-1];
@@ -100,16 +105,22 @@ document.addEventListener('DOMContentLoaded', function() {
 			stack_content += ']';
 			$('#queue-arr').text(queue_content);
 			$('#stack-arr').text(stack_content);
+			var waiting_msg = 'waiting for:';
+			for ( var i=0; i<player; ++i )	if ( !vis[i] )	waiting_msg += ' ' + userList[i];
+			$('#tail').text(waiting_msg, '連我阿嬤都按得比你快');
 		}
 	});
 
-	socket.on('score', function(id, scoreList, vis, refresh) {
+	socket.on('score', function(id, scoreList, vis, refresh, userList) {
 		var Pcnt = 0;
 		for ( var i=0; i<player; ++i )	if ( vis[i] )	Pcnt++;
 		if ( Pcnt == player || refresh ) {
 			for ( var i=0; i<player; ++i )	$('#score' + i).text(scoreList[i]);
 			if ( !refresh )	socket.emit('nextRnd');
 			Pcnt = 0;
+			var waiting_msg = 'waiting for:';
+			for ( var i=0; i<player; ++i )	waiting_msg += ' ' + userList[i];
+			$('#tail').text(waiting_msg, '連我阿嬤都按得比你快');
 		}
 	});
 });

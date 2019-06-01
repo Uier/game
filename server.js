@@ -60,7 +60,6 @@ io.on('connection', (socket) => {
 				io.emit('setIO', Rnd, value[Rnd], record);
 				Rnd++;
 				for ( var i=0; i<player; ++i )	vis[i] = false;
-				io.emit('update', -1, [], [], userList);
 				console.log('\n\n==================================================');
 				console.log('Round: ' + Rnd);
 			} else {
@@ -73,8 +72,8 @@ io.on('connection', (socket) => {
 
 	socket.on('refresh', (id) => {
 		io.emit('setIO', Rnd-1, value[Rnd-1], record);
-		io.emit('update', id, queue[id], stack[id], userList);
-		io.emit('score', id, scoreList, vis, true);
+		io.emit('update', id, queue[id], stack[id], userList, vis);
+		io.emit('score', id, scoreList, vis, true, userList);
 	});
 
 	socket.on('click', (name, container) => {
@@ -126,7 +125,7 @@ function DoMove(id, act, container) {
 		scoreList[id] = 0;
 		for ( var i=0; i<queue[id].length; ++i )	scoreList[id] += queue[id][i];
 		for ( var i=0; i<stack[id].length; ++i )	scoreList[id] += stack[id][i];
-		io.emit('update', id, queue[id], stack[id], userList);
-		io.emit('score', id, scoreList, vis, false);
+		io.emit('update', id, queue[id], stack[id], userList, vis);
+		io.emit('score', id, scoreList, vis, false, userList);
 	}
 }
