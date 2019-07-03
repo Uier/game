@@ -53,9 +53,9 @@ document.addEventListener('DOMContentLoaded', function() {
 		// start require
 		if ( amount == player && Rnd == 0 ) {
 			socket.emit('nextRnd');
-			var waiting_msg = 'waiting for:';
-			for ( var i=0; i<player; ++i )	waiting_msg += ' ' + userList[i];
-			$('#tail').text(waiting_msg, '連我阿嬤都按得比你快');
+			// var waiting_msg = 'waiting for:';
+			// for ( var i=0; i<player; ++i )	waiting_msg += ' ' + userList[i];
+			// $('#tail').text(waiting_msg, '連我阿嬤都按得比你快');
 		}
 		// refresh
 		if ( Rnd > 0 )	socket.emit('refresh', userList.findIndex(findName));
@@ -105,9 +105,9 @@ document.addEventListener('DOMContentLoaded', function() {
 			stack_content += ']';
 			$('#queue-arr').text(queue_content);
 			$('#stack-arr').text(stack_content);
-			var waiting_msg = 'waiting for:';
-			for ( var i=0; i<player; ++i )	if ( !vis[i] )	waiting_msg += ' ' + userList[i];
-			$('#tail').text(waiting_msg, '連我阿嬤都按得比你快');
+			// var waiting_msg = 'waiting for:';
+			// for ( var i=0; i<player; ++i )	if ( !vis[i] )	waiting_msg += ' ' + userList[i];
+			// $('#tail').text(waiting_msg, '連我阿嬤都按得比你快');
 		}
 	});
 
@@ -118,9 +118,9 @@ document.addEventListener('DOMContentLoaded', function() {
 			for ( var i=0; i<player; ++i )	$('#score' + i).text(scoreList[i]);
 			if ( !refresh )	socket.emit('nextRnd');
 			Pcnt = 0;
-			var waiting_msg = 'waiting for:';
-			for ( var i=0; i<player; ++i )	waiting_msg += ' ' + userList[i];
-			$('#tail').text(waiting_msg, '連我阿嬤都按得比你快');
+			// var waiting_msg = 'waiting for:';
+			// for ( var i=0; i<player; ++i )	waiting_msg += ' ' + userList[i];
+			// $('#tail').text(waiting_msg, '連我阿嬤都按得比你快');
 		}
 	});
 });
