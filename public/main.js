@@ -53,6 +53,10 @@ document.addEventListener('DOMContentLoaded', function() {
 		// start require
 		if ( amount == player && Rnd == 0 ) {
 			socket.emit('nextRnd');
+			for ( var i=0; i<player; ++i ) {
+				var id = '#Team' + i;
+				$(id).css('color', '#fff');
+			}
 			// var waiting_msg = 'waiting for:';
 			// for ( var i=0; i<player; ++i )	waiting_msg += ' ' + userList[i];
 			// $('#tail').text(waiting_msg, '連我阿嬤都按得比你快');
@@ -109,6 +113,12 @@ document.addEventListener('DOMContentLoaded', function() {
 			// for ( var i=0; i<player; ++i )	if ( !vis[i] )	waiting_msg += ' ' + userList[i];
 			// $('#tail').text(waiting_msg, '連我阿嬤都按得比你快');
 		}
+		for ( var i=0; i<player; ++i )
+			if ( vis[i] ) {
+				var str = '#Team' + i;
+				$(str).css('color', '#6eeb83');
+				$(str).css('border-color', '#fff #fff #fff rgba(0,0,0,0)');
+			}
 	});
 
 	socket.on('score', function(id, scoreList, vis, refresh, userList) {
@@ -121,6 +131,11 @@ document.addEventListener('DOMContentLoaded', function() {
 			// var waiting_msg = 'waiting for:';
 			// for ( var i=0; i<player; ++i )	waiting_msg += ' ' + userList[i];
 			// $('#tail').text(waiting_msg, '連我阿嬤都按得比你快');
+			for ( var i=0; i<player; ++i ) {
+				var str = '#Team' + i;
+				$(str).css('color', '#fff');
+				$(str).css('border-color', '#fff #fff #fff rgba(0,0,0,0)');
+			}
 		}
 	});
 });
