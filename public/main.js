@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
 				$(id).css('color', '#fff');
 			}
 			// var waiting_msg = 'waiting for:';
-			// for ( var i=0; i<player; ++i )	waiting_msg += ' ' + userList[i];
+			// for ( var i=0; i<player; ++i )	waiting_msg += '' + userList[i];
 			// $('#tail').text(waiting_msg, '連我阿嬤都按得比你快');
 		}
 		// refresh
@@ -117,24 +117,24 @@ document.addEventListener('DOMContentLoaded', function() {
 			if ( vis[i] ) {
 				var str = '#Team' + i;
 				$(str).css('color', '#6eeb83');
-				$(str).css('border-color', '#fff #fff #fff rgba(0,0,0,0)');
+				$(str).css('border-color', '#FFC9D8');
 			}
 	});
 
 	socket.on('score', function(id, scoreList, vis, refresh, userList) {
-		var Pcnt = 0;
-		for ( var i=0; i<player; ++i )	if ( vis[i] )	Pcnt++;
-		if ( Pcnt == player || refresh ) {
+		var PlayerCnt = 0;
+		for ( var i=0; i<player; ++i )	if ( vis[i] )	PlayerCnt++;
+		if ( PlayerCnt == player || refresh ) {
 			for ( var i=0; i<player; ++i )	$('#score' + i).text(scoreList[i]);
 			if ( !refresh )	socket.emit('nextRnd');
-			Pcnt = 0;
+			PlayerCnt = 0;
 			// var waiting_msg = 'waiting for:';
 			// for ( var i=0; i<player; ++i )	waiting_msg += ' ' + userList[i];
 			// $('#tail').text(waiting_msg, '連我阿嬤都按得比你快');
 			for ( var i=0; i<player; ++i ) {
 				var str = '#Team' + i;
 				$(str).css('color', '#fff');
-				$(str).css('border-color', '#fff #fff #fff rgba(0,0,0,0)');
+				$(str).css('border-color', '#FFC9D8');
 			}
 		}
 	});

@@ -105,7 +105,7 @@ header {
   background-color: #131F37;
 }
 
-.score tr:first-child td{
+/*.score tr:first-child td{
   border-top-color: #131F37;
 }
 
@@ -119,7 +119,7 @@ header {
 
 .score tr td:last-child{
   border-right-color: #131F37;
-}
+}*/
 
 .queue-btn, .stack-btn {
   user-select: none;
