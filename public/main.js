@@ -54,8 +54,9 @@ document.addEventListener('DOMContentLoaded', function() {
 		if ( amount == player && Rnd == 0 ) {
 			socket.emit('nextRnd');
 			for ( var i=0; i<player; ++i ) {
-				var id = '#Team' + i;
-				$(id).css('color', '#fff');
+				var str = '#Team' + i;
+				$(str).css('color', '#fff');
+				$(str).css('border-color', '#FFC9D8');
 			}
 			// var waiting_msg = 'waiting for:';
 			// for ( var i=0; i<player; ++i )	waiting_msg += '' + userList[i];
