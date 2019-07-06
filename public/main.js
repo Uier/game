@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	socket.on('setgame', function(Rnd, amount, userList, scoreList, data) {
 		// allocate instructions
 		if ( init == false ) {
-			init = true;
+			// init = true;
 			for ( var i=0; i<data[0].length; ++i ) {
 				var content = '<div class="set" id="rnd' + (i+1) + '">';
 				if ( i > Rnd ) {
@@ -58,12 +58,23 @@ document.addEventListener('DOMContentLoaded', function() {
 				$(str).css('color', '#fff');
 				$(str).css('border-color', '#FFC9D8');
 			}
-			// var waiting_msg = 'waiting for:';
-			// for ( var i=0; i<player; ++i )	waiting_msg += '' + userList[i];
-			// $('#tail').text(waiting_msg, '連我阿嬤都按得比你快');
 		}
 		// refresh
 		if ( Rnd > 0 )	socket.emit('refresh', userList.findIndex(findName));
+	});
+
+	socket.on('setscoreboard', function(userList) {
+		if ( init == false ) {
+			init = true;
+			for ( var i=0; i<player; ++i ) {
+				$('#scoreboard tbody').append(
+					'<tr>' +
+					'<td style=\"width: 70%\" id=\"Team' + i + '\">' + userList[i] + '</td>' +
+					'<td style=\"width: 30%\" id=\"score' + i + '\">' + 0 + '</td>' +
+					'</tr>'
+				);
+			}
+		}
 	});
 
 	socket.on('highlight', function(Rnd) {
@@ -110,9 +121,6 @@ document.addEventListener('DOMContentLoaded', function() {
 			stack_content += ']';
 			$('#queue-arr').text(queue_content);
 			$('#stack-arr').text(stack_content);
-			// var waiting_msg = 'waiting for:';
-			// for ( var i=0; i<player; ++i )	if ( !vis[i] )	waiting_msg += ' ' + userList[i];
-			// $('#tail').text(waiting_msg, '連我阿嬤都按得比你快');
 		}
 		for ( var i=0; i<player; ++i )
 			if ( vis[i] ) {
@@ -129,9 +137,6 @@ document.addEventListener('DOMContentLoaded', function() {
 			for ( var i=0; i<player; ++i )	$('#score' + i).text(scoreList[i]);
 			if ( !refresh )	socket.emit('nextRnd');
 			PlayerCnt = 0;
-			// var waiting_msg = 'waiting for:';
-			// for ( var i=0; i<player; ++i )	waiting_msg += ' ' + userList[i];
-			// $('#tail').text(waiting_msg, '連我阿嬤都按得比你快');
 			for ( var i=0; i<player; ++i ) {
 				var str = '#Team' + i;
 				$(str).css('color', '#fff');

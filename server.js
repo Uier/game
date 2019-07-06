@@ -1,5 +1,5 @@
-if ( process.argv.length !== 4 || process.argv[3] > 5 || process.argv[3] < 0 ) {
-  	console.log('Usage: node [server] [game configuration (json format)] [the num of player(0~5)]');
+if ( process.argv.length !== 4 || process.argv[3] > 9 || process.argv[3] < 0 ) {
+  	console.log('Usage: node [server] [game configuration (json format)] [the num of player(0~9)]');
   	process.exit(1);
 }
 
@@ -30,7 +30,7 @@ for ( var i=0; i<gameConfig[0].length; ++i ) {
 	record[1] += gameConfig[0][i];
 }
 for ( var i=0; i<gameConfig[0].length; ++i )	value[i] = random_value(gameConfig[1]);
-for ( var i=0; i<player; ++i ) {queue[i] = [];stack[i] = [];vis[i] = false;userList[i] = "loading...";scoreList[i] = 0;}
+for ( var i=0; i<player; ++i ) {queue[i] = [];stack[i] = [];vis[i] = false;userList[i] = "";scoreList[i] = 0;}
 console.log(record);
 
 io.on('connection', (socket) => {
@@ -44,11 +44,14 @@ io.on('connection', (socket) => {
 	});
 
 	socket.on('setname', (name) => {
-		if ( find(name) == -1 ) {
+		if ( find(name) == -1 && cnt < player ) {
 			userList[cnt++] = name;
 			console.log('\n*************************\n', 'new user login: ' + name, '\n*************************\n');
 		} else	console.log('\nuser login: ' + name + '\n' + '\nnow online: ' + userList + '\n');
-		if ( cnt <= player ) io.emit('setgame', Rnd, onlineCount, userList, scoreList, record);
+		if ( cnt <= player ) {
+			io.emit('setgame', Rnd, onlineCount, userList, scoreList, record);
+			io.emit('setscoreboard', userList);
+		}
 	});
 
 	socket.on('nextRnd', () => {
@@ -72,6 +75,7 @@ io.on('connection', (socket) => {
 
 	socket.on('refresh', (id) => {
 		io.emit('setIO', Rnd-1, value[Rnd-1], record);
+		// io.emit('setscoreboard', userList);
 		io.emit('update', id, queue[id], stack[id], userList, vis);
 		io.emit('score', id, scoreList, vis, true, userList);
 	});
@@ -126,6 +130,25 @@ function DoMove(id, act, container) {
 		for ( var i=0; i<queue[id].length; ++i )	scoreList[id] += queue[id][i];
 		for ( var i=0; i<stack[id].length; ++i )	scoreList[id] += stack[id][i];
 		io.emit('update', id, queue[id], stack[id], userList, vis);
+		// console.log('sorting');
+		// score_sort();
+		// console.log('complete\n');
 		io.emit('score', id, scoreList, vis, false, userList);
+	}
+}
+
+function score_sort() {
+	var arr = [];
+	for ( var i=0; i<player; ++i ) {
+		arr[i] = new Array(2);
+		arr[i][0] = userList[i];
+		arr[i][1] = scoreList[i];
+	}
+	arr.sort(function(x,y) {
+		return y[1] - x[1];
+	});
+	for ( var i=0; i<player; ++i ) {
+		userList[i] = arr[i][0];
+		scoreList[i] = arr[i][1];
 	}
 }

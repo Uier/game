@@ -105,22 +105,6 @@ header {
   background-color: #131F37;
 }
 
-/*.score tr:first-child td{
-  border-top-color: #131F37;
-}
-
-.score tr:last-child td{
-  border-bottom-color: #131F37;
-}
-
-.score tr td:first-child{
-  border-left-color: #131F37;
-}
-
-.score tr td:last-child{
-  border-right-color: #131F37;
-}*/
-
 .queue-btn, .stack-btn {
   user-select: none;
   cursor: pointer;
