@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		if ( Rnd > 0 )	socket.emit('refresh', userList.findIndex(findName));
 	});
 
-	socket.on('setscoreboard', function(userList) {
+	socket.on('setscoreboard', function(userList, scoreList) {
 		if ( init == false ) {
 			init = true;
 			for ( var i=0; i<player; ++i ) {
@@ -134,7 +134,10 @@ document.addEventListener('DOMContentLoaded', function() {
 		var PlayerCnt = 0;
 		for ( var i=0; i<player; ++i )	if ( vis[i] )	PlayerCnt++;
 		if ( PlayerCnt == player || refresh ) {
-			for ( var i=0; i<player; ++i )	$('#score' + i).text(scoreList[i]);
+			for ( var i=0; i<player; ++i ) {
+				$('#Team' + i).text(userList[i]);
+				$('#score' + i).text(scoreList[i]);
+			}
 			if ( !refresh )	socket.emit('nextRnd');
 			PlayerCnt = 0;
 			for ( var i=0; i<player; ++i ) {
