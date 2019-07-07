@@ -22,26 +22,27 @@ server.listen(8888, () => {
 });
 
 // setup
-var onlineCount = 0, Rnd = 0, finish = 0, cnt = 0, player = process.argv[3];
-var gameConfig = JSON.parse(fs.readFileSync(process.argv[2], 'ascii'));
+const player = process.argv[3];
+const gameConfig = JSON.parse(fs.readFileSync(process.argv[2], 'ascii'));
+var onlineCount = 0, Rnd = 0, cnt = 0;
 var value = [];
 var playerList = [];
 var record = ["", ""];
 
 // instruction list
 var insList = gameConfig[0];
-for ( var i=0; i<insList.length; ++i ) {
+for ( let i=0; i<insList.length; ++i ) {
 	if ( insList[i] == '?' )
-		record[0] += (random_value(2) == 1 ? 'i' : 'o');
+		record[0] += (randomValue(2) == 1 ? 'i' : 'o');
 	else
 		record[0] += insList[i];
 	
 	record[1] += insList[i];
 }
-for ( var i=0; i<insList.length; ++i )
-	value[i] = random_value(gameConfig[1]);
+for ( let i=0; i<insList.length; ++i )
+	value[i] = randomValue(gameConfig[1]);
 // setup players
-for ( var i=0; i<player; ++i )
+for ( let i=0; i<player; ++i )
 {
 	playerList.push({
 		queue: [],
@@ -72,8 +73,6 @@ function scoreList() {
 function vis() {
 	return getAttr(p => p.vis);
 }
-
-
 
 io.on('connection', (socket) => {
 	onlineCount++;
@@ -106,13 +105,12 @@ io.on('connection', (socket) => {
 			if(v) finCnt++;
 
 		if ( finCnt == player ) {
-			// finish = 0;
 			// highlight bar moving
 			io.emit('highlight', Rnd);
 			if ( Rnd < insList.length ) {
 				io.emit('setIO', Rnd, value[Rnd], record);
 				Rnd++;
-				for ( var i=0; i<player; ++i )	playerList[i].vis = false;
+				for ( let i=0; i<player; ++i )	playerList[i].vis = false;
 				console.log('\n\n==================================================');
 				console.log('Round: ' + Rnd);
 			} else {
@@ -131,7 +129,7 @@ io.on('connection', (socket) => {
 	});
 
 	socket.on('click', (name, container) => {
-		var id = find(name);
+		let id = find(name);
 		if ( container == 'q' ) {
 			console.log('activity: ' + name + ' click queue\n');
 			if ( record[0][Rnd-1] == 'i' )	DoMove(id, 'i', 'q');
@@ -145,12 +143,12 @@ io.on('connection', (socket) => {
 });
 
 function find(x) {
-	for ( var i=0; i<player; ++i )
+	for ( let i=0; i<player; ++i )
 		if ( playerList[i].name == x )	return i;
 	return -1;
 }
 
-function random_value(max_value) {
+function randomValue(max_value) {
 	return 1 + Math.floor(Math.random() * max_value);
 }
 
@@ -183,15 +181,6 @@ function DoMove(id, act, container) {
 		for ( let i=0; i<playerList[id].stack.length; ++i )
 			playerList[id].score += playerList[id].stack[i];
 		io.emit('update', id, playerList[id].queue, playerList[id].stack, userList(), vis());
-		console.log('sorting');
-		score_sort();
-		console.log('complete\n');
 		io.emit('score', id, scoreList(), vis(), false, userList());
 	}
-}
-
-function score_sort() {
-	playerList.sort((x, y) => {
-		return y.score - x.score;
-	});
 }
