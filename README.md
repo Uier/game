@@ -1,11 +1,13 @@
-## game for NTNU CSIE summer camp
+# game for NTNU CSIE summer camp
 
-### Usage: 
-```
-node server.js [game configuration (json format)] [the number of player(0~5)]
+## Usage
+
+```bash
+node server.js [game configuration (json format)] [the number of player(0~9)]
 ```
 
 ## Todo List
+
 - [x] operations presenting
 - [x] score display
 - [x] cookies
@@ -24,5 +26,6 @@ node server.js [game configuration (json format)] [the number of player(0~5)]
 - [ ] bug: restart server then skip first round
 
 ### others
+
 developer: TzuWei Yu  
 game idea came from NTU DSA 2019

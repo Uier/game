@@ -24,12 +24,17 @@ document.addEventListener('DOMContentLoaded', function() {
 			for ( let i=0; i<data[0].length; ++i ) {
 				var content = '<div class="set" id="rnd' + (i+1) + '">';
 				if ( i > Rnd ) {
-					if ( data[1][i] == 'i' )	content += 'Push</div>';
-					else if ( data[1][i] == 'o' )	content += 'Pop</div>'
-					else content += '???</div>';
+					if ( data[1][i] == 'i' )
+						content += 'Push</div>';
+					else if ( data[1][i] == 'o' )
+						content += 'Pop</div>';
+					else
+						content += '???</div>';
 				} else {
-					if ( data[0][i] == 'i' )	content += 'Push</div>';
-					else	content += 'Pop</div>';
+					if ( data[0][i] == 'i' )
+						content += 'Push</div>';
+					else
+						content += 'Pop</div>';
 				}
 				console.log(content);
 				$('#operation').append(content);
@@ -63,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		if ( Rnd > 0 )	socket.emit('refresh', userList.findIndex(findName));
 	});
 
-	socket.on('setscoreboard', function(userList) {
+	socket.on('setscoreboard', function(userList, scoreList) {
 		if ( init == false ) {
 			init = true;
 			for ( let i=0; i<player; ++i ) {
@@ -134,7 +139,10 @@ document.addEventListener('DOMContentLoaded', function() {
 		var PlayerCnt = 0;
 		for ( let i=0; i<player; ++i )	if ( vis[i] )	PlayerCnt++;
 		if ( PlayerCnt == player || refresh ) {
-			for ( let i=0; i<player; ++i )	$('#score' + i).text(scoreList[i]);
+			for ( var i=0; i<player; ++i ) {
+				$('#Team' + i).text(userList[i]);
+				$('#score' + i).text(scoreList[i]);
+			}
 			if ( !refresh )	socket.emit('nextRnd');
 			PlayerCnt = 0;
 			for ( let i=0; i<player; ++i ) {
