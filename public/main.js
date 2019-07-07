@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		// allocate instructions
 		if ( init == false ) {
 			// init = true;
-			for ( var i=0; i<data[0].length; ++i ) {
+			for ( let i=0; i<data[0].length; ++i ) {
 				var content = '<div class="set" id="rnd' + (i+1) + '">';
 				if ( i > Rnd ) {
 					if ( data[1][i] == 'i' )	content += 'Push</div>';
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		$('#rnd' + Rnd).css('color', 'black');
 		$('#rnd' + Rnd).css('background-color', 'yellow');
 		// update users
-		for ( var i=0; i<player; ++i )	$('#Team' + i).text(userList[i]);
+		for ( let i=0; i<player; ++i )	$('#Team' + i).text(userList[i]);
 		// scoreboard highlight
 		var highlight = '#' + scoreList[userList.findIndex(findName)];
 		$(highlight).css('color', 'black');
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		// start require
 		if ( amount == player && Rnd == 0 ) {
 			socket.emit('nextRnd');
-			for ( var i=0; i<player; ++i ) {
+			for ( let i=0; i<player; ++i ) {
 				var str = '#Team' + i;
 				$(str).css('color', '#fff');
 				$(str).css('border-color', '#FFC9D8');
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	socket.on('setscoreboard', function(userList) {
 		if ( init == false ) {
 			init = true;
-			for ( var i=0; i<player; ++i ) {
+			for ( let i=0; i<player; ++i ) {
 				$('#scoreboard tbody').append(
 					'<tr>' +
 					'<td style=\"width: 70%\" id=\"Team' + i + '\">' + userList[i] + '</td>' +
@@ -107,14 +107,14 @@ document.addEventListener('DOMContentLoaded', function() {
 		if ( id >= 0 && userList[id] == name ) {
 			var queue_content = '[';
 			if ( queue.length > 0 )	queue_content += queue[queue.length-1];
-			for ( var i=queue.length-2; i>=0; --i ) {
+			for ( let i=queue.length-2; i>=0; --i ) {
 				queue_content += ', ';
 				queue_content += queue[i];
 			}
 			queue_content += ']';
 			var stack_content = '[';
 			if ( stack.length > 0 )	stack_content += stack[stack.length-1];
-			for ( var i=stack.length-2; i>=0; --i ) {
+			for ( let i=stack.length-2; i>=0; --i ) {
 				stack_content += ', ';
 				stack_content += stack[i];
 			}
@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			$('#queue-arr').text(queue_content);
 			$('#stack-arr').text(stack_content);
 		}
-		for ( var i=0; i<player; ++i )
+		for ( let i=0; i<player; ++i )
 			if ( vis[i] ) {
 				var str = '#Team' + i;
 				$(str).css('color', '#6eeb83');
@@ -132,12 +132,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	socket.on('score', function(id, scoreList, vis, refresh, userList) {
 		var PlayerCnt = 0;
-		for ( var i=0; i<player; ++i )	if ( vis[i] )	PlayerCnt++;
+		for ( let i=0; i<player; ++i )	if ( vis[i] )	PlayerCnt++;
 		if ( PlayerCnt == player || refresh ) {
-			for ( var i=0; i<player; ++i )	$('#score' + i).text(scoreList[i]);
+			for ( let i=0; i<player; ++i )	$('#score' + i).text(scoreList[i]);
 			if ( !refresh )	socket.emit('nextRnd');
 			PlayerCnt = 0;
-			for ( var i=0; i<player; ++i ) {
+			for ( let i=0; i<player; ++i ) {
 				var str = '#Team' + i;
 				$(str).css('color', '#fff');
 				$(str).css('border-color', '#FFC9D8');
@@ -157,7 +157,7 @@ function setCookie(name) {
 function getCookie(prefix) {
 	prefix += '=';
 	var cookie = document.cookie.split(';');
-	for ( var i=0; i<cookie.length; ++i ) {
+	for ( let i=0; i<cookie.length; ++i ) {
 		var str = cookie[i].trim();
 		if ( str.indexOf(prefix) == 0 )
 			return str.substring(prefix.length, str.length);
