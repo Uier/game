@@ -5,7 +5,12 @@ document.addEventListener('DOMContentLoaded', function() {
 		console.log('connected');
 	    $('#status').text('Connected');
 	    name = checkCookie();
-	    $('#username').text(name);
+		$('#username').text(name);
+		
+		// setInterval(() => {
+		// 	console.log('chika<3');
+		// 	socket.emit('nextRnd');
+		// }, 500);
 	});
 
 	socket.on('online', function(amount, plyr) {

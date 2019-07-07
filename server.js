@@ -81,12 +81,13 @@ io.on('connection', (socket) => {
 	io.emit('online', onlineCount, player);
 
 	socket.on('disconnect', () => {
-		onlineCount -= 1;
+		onlineCount--;
 		io.emit('online', (onlineCount < 0 ? 0 : onlineCount));
 	});
 
 	socket.on('setname', (name) => {
 		if ( find(name) == -1 && cnt < player ) {
+			playerList[cnt].vis = true;
 			playerList[cnt++].name = name;
 			console.log('\n*************************\n', 'new user login: ' + name, '\n*************************\n');
 		} else {
@@ -100,8 +101,12 @@ io.on('connection', (socket) => {
 	});
 
 	socket.on('nextRnd', () => {
-		if ( ++finish == player ) {
-			finish = 0;
+		let finCnt = 0;
+		for(let v of vis())
+			if(v) finCnt++;
+
+		if ( finCnt == player ) {
+			// finish = 0;
 			// highlight bar moving
 			io.emit('highlight', Rnd);
 			if ( Rnd < insList.length ) {
