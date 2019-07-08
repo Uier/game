@@ -181,7 +181,9 @@ function getCookie(prefix) {
 function checkCookie() {
 	var user = getCookie('username');
 	if ( user == '' ) {
-		user = prompt('歡迎！異世界的勇者們呀，請輸入你們小隊的隊名！');
+		do {
+			user = prompt('歡迎！異世界的勇者們呀，請輸入你們小隊的隊名！');
+		} while ( user.length < 2 || user.length > 10 );
 		setCookie(user);
 	}
 	socket.emit('setname', user);

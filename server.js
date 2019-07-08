@@ -122,22 +122,26 @@ io.on('connection', (socket) => {
 	});
 
 	socket.on('refresh', (id) => {
-		io.emit('setIO', Rnd-1, value[Rnd-1], record);
-		// io.emit('setscoreboard', userList);
-		io.emit('update', id, playerList[id].queue, playerList[id].stack, userList(), vis());
-		io.emit('score', id, scoreList(), vis(), true, userList());
+		if ( 0 <= id && id < player ) {
+			io.emit('setIO', Rnd-1, value[Rnd-1], record);
+			// io.emit('setscoreboard', userList);
+			io.emit('update', id, playerList[id].queue, playerList[id].stack, userList(), vis());
+			io.emit('score', id, scoreList(), vis(), true, userList());
+		}
 	});
 
 	socket.on('click', (name, container) => {
 		let id = find(name);
-		if ( container == 'q' ) {
-			console.log('activity: ' + name + ' click queue\n');
-			if ( record[0][Rnd-1] == 'i' )	DoMove(id, 'i', 'q');
-			else if ( playerList[id].queue.length > 0 )	DoMove(id, 'o', 'q');
-		} else {
-			console.log('activity: ' + name + ' click stack\n');
-			if ( record[0][Rnd-1] == 'i' )	DoMove(id, 'i', 's');
-			else if ( playerList[id].stack.length > 0 )	DoMove(id, 'o', 's');
+		if ( 0 <= id && id < player ) {
+			if ( container == 'q' ) {
+				console.log('activity: ' + name + ' click queue\n');
+				if ( record[0][Rnd-1] == 'i' )	DoMove(id, 'i', 'q');
+				else if ( playerList[id].queue.length > 0 )	DoMove(id, 'o', 'q');
+			} else {
+				console.log('activity: ' + name + ' click stack\n');
+				if ( record[0][Rnd-1] == 'i' )	DoMove(id, 'i', 's');
+				else if ( playerList[id].stack.length > 0 )	DoMove(id, 'o', 's');
+			}
 		}
 	});
 });
@@ -153,7 +157,7 @@ function randomValue(max_value) {
 }
 
 function DoMove(id, act, container) {
-	if ( id >= 0 && !playerList[id].vis ) {
+	if ( 0 <= id && id < player && !playerList[id].vis ) {
 		playerList[id].vis = true;
 		console.log('click states: ' + playerList[id].vis);
 		if ( act == 'i' ) {
