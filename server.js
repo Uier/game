@@ -86,6 +86,8 @@ io.on('connection', (socket) => {
 	});
 
 	socket.on('setname', (name) => {
+		name = decodeURIComponent(name);
+
 		if ( find(name) == -1 && cnt < player ) {
 			playerList[cnt].vis = true;
 			playerList[cnt++].name = name;
