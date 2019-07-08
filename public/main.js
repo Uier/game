@@ -14,6 +14,8 @@ document.addEventListener('DOMContentLoaded', function() {
 	});
 
 	socket.on('online', function(amount, plyr) {
+		if ( amount > plyr )
+			socket.disconnect();
 	    $('#online').text((amount > plyr ? plyr : amount));
 		player = plyr;
 	});
@@ -70,6 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			}
 		}
 		// refresh
+		// waiting for modification, pass userName_hashing value to server and find id.
 		if ( Rnd > 0 )	socket.emit('refresh', userList.findIndex(findName));
 	});
 

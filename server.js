@@ -81,6 +81,7 @@ io.on('connection', (socket) => {
 
 	socket.on('disconnect', () => {
 		onlineCount--;
+		console.log(onlineCount);
 		io.emit('online', (onlineCount < 0 ? 0 : onlineCount));
 	});
 
