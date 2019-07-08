@@ -6,10 +6,10 @@ document.addEventListener('DOMContentLoaded', function() {
 	    $('#status').text('Connected');
 	    name = checkCookie();
 		$('#username').text(name);
-		
+
 		// setInterval(() => {
-		// 	console.log('chika<3');
-		// 	socket.emit('nextRnd');
+		//      console.log('chika<3');
+		//      socket.emit('nextRnd');
 		// }, 500);
 	});
 
@@ -183,14 +183,18 @@ function getCookie(prefix) {
 
 function checkCookie() {
 	var user = getCookie('username');
+
 	if ( user == '' ) {
 		do {
 			user = prompt('歡迎！異世界的勇者們呀，請輸入你們小隊的隊名！');
-		} while ( user.length < 2 || user.length > 10 );
+		} while ( user.length < 2 || user.length > 20 );
+		user = encodeURIComponent(user)
 		setCookie(user);
 	}
+
 	socket.emit('setname', user);
-	return user;
+
+	return decodeURIComponent(user);
 }
 
 function click_queue() {
