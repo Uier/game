@@ -41,7 +41,7 @@ header {
 }
 
 .operation {
-  float: left;
+  flex: 1;
   width: 15%;
   font-size: 20px;
   height: 70vh;
@@ -57,40 +57,32 @@ header {
 }
 
 .state {
-  float: left;
-  width: 65%;
+  flex: 5;
 }
 
 .title {
-  float: left;
   font-size: 20px;
   padding-left: 20px;
 }
 
 .queue {
-  float: left;
   font-size: 20px;
   color: #AFA;
-  width: 100%;
-  display: inline;
   white-space: pre-wrap;
   margin-top: 10px;
   padding-left: 20px;
 }
 
 .stack {
-  float: left;
   font-size: 20px;
   color: #AAF;
-  width: 100%;
-  display: inline;
   white-space: pre-wrap;
   margin-top: 10px;
   padding-left: 20px;
 }
 
 .score-container {
-  float: right;
+  flex: 2;
   width: 20%;
   font-size: 0px; /*clear top space*/
 }
@@ -118,4 +110,19 @@ header {
 .stack-btn:hover{
   background:#AAF;
   color:black;
+}
+
+.flex-container {
+  display: flex;
+}
+
+#chika-box {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.chika-img {
+  flex: 1;
+  height: 200px;
+  object-fit: contain;
 }

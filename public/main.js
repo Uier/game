@@ -1,27 +1,25 @@
 var name, player, init = false;
+var socket;
 
 document.addEventListener('DOMContentLoaded', function() {
+	socket = io();
+
 	socket.on('connect', function() {
 		console.log('connected');
-	    $('#status').text('Connected');
-	    name = checkCookie();
+		$('#status').text('Connected');
+		name = checkCookie();
 		$('#username').text(name);
-
-		// setInterval(() => {
-		//      console.log('chika<3');
-		//      socket.emit('nextRnd');
-		// }, 500);
 	});
 
 	socket.on('online', function(amount, plyr) {
 		if ( amount > plyr )
 			socket.disconnect();
-	    $('#online').text((amount > plyr ? plyr : amount));
+		$('#online').text((amount > plyr ? plyr : amount));
 		player = plyr;
 	});
 
 	socket.on('disconnect', function() {
-	   	$('#status').text('Disconnected');
+			$('#status').text('Disconnected');
 	});
 
 	socket.on('setgame', function(Rnd, amount, userList, scoreList, data) {
@@ -180,8 +178,8 @@ function checkCookie() {
 	if ( user == '' ) {
 		do {
 			user = prompt('歡迎！異世界的勇者們呀，請輸入你們小隊的隊名！');
-		} while ( user.length < 2 || user.length > 20 );
-		user = encodeURIComponent(user)
+		} while ( user == null || user.length < 2 || user.length > 20 );
+		user = encodeURIComponent(user);
 		setCookie(user);
 	}
 
