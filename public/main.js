@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		var highlight = '#' + scoreList[userList.findIndex(findName)];
 		$(highlight).css('color', 'black');
 		$(highlight).css('background-color', 'yellow');
-		highlight = '#' + userList[userList.findIndex(findName)];
+		highlight = "#[id='" + userList[userList.findIndex(findName)] + "']";
 		$(highlight).css('color', 'black');
 		$(highlight).css('background-color', 'yellow');
 		// start require
