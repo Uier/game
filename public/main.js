@@ -55,13 +55,6 @@ document.addEventListener('DOMContentLoaded', function() {
 		$('#rnd' + Rnd).css('background-color', 'yellow');
 		// update users
 		for ( let i=0; i<player; ++i )	$('#Team' + i).text(userList[i]);
-		// scoreboard highlight
-		var highlight = '#' + scoreList[userList.findIndex(findName)];
-		$(highlight).css('color', 'black');
-		$(highlight).css('background-color', 'yellow');
-		highlight = "#[id='" + userList[userList.findIndex(findName)] + "']";
-		$(highlight).css('color', 'black');
-		$(highlight).css('background-color', 'yellow');
 		// start require
 		if ( amount == player && Rnd == 0 ) {
 			socket.emit('nextRnd');
