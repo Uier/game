@@ -1,5 +1,5 @@
 if ( process.argv.length !== 4 || process.argv[3] > 9 || process.argv[3] < 0 ) {
-  	console.log('Usage: node [server] [game configuration (json format)] [the num of player(0~9)]');
+  	console.log('Usage: node [server] [game configuration (json format)] [the num of PLAYER(0~9)]');
   	process.exit(1);
 }
 
@@ -22,15 +22,15 @@ server.listen(8888, () => {
 });
 
 // setup
-const player = process.argv[3];
-const gameConfig = JSON.parse(fs.readFileSync(process.argv[2], 'ascii'));
-var onlineCount = 0, Rnd = 0, cnt = 0;
+const PLAYER = process.argv[3];
+const GAME_CONFIG = JSON.parse(fs.readFileSync(process.argv[2], 'ascii'));
+var onlineCnt = 0, Rnd = 0, cnt = 0;
 var value = [];
 var playerList = [];
 var record = ["", ""];
 
 // instruction list
-var insList = gameConfig[0];
+var insList = GAME_CONFIG[0];
 for ( let i=0; i<insList.length; ++i ) {
 	if ( insList[i] == '?' )
 		record[0] += (randomValue(2) == 1 ? 'i' : 'o');
@@ -43,13 +43,14 @@ console.log(record);
 
 // generate push value
 for ( let i=0; i<insList.length; ++i )
-	value[i] = randomValue(gameConfig[1]);
+	value[i] = randomValue(GAME_CONFIG[1]);
 
 var randToken = function() {
 	return Math.random().toString(36).substr(2);
 };
+
 // setup players
-for ( let i=0; i<player; ++i ) {
+for ( let i=0; i<PLAYER; ++i ) {
 	playerList.push({
 		queue: [],
 		stack: [],
@@ -59,8 +60,9 @@ for ( let i=0; i<player; ++i ) {
 		token: randToken()
 	});
 }
+
 console.log('**************************************************');
-for ( let t of token() )	console.log('setup - userToken: ' + t);
+for ( let t of token() ) console.log(`setup - userToken: ${t}`);
 console.log('**************************************************');
 
 function getAttr(attr) {
@@ -88,54 +90,55 @@ function token() {
 }
 
 io.on('connection', (socket) => {
-	onlineCount++;
+	onlineCnt++;
 
-	io.emit('online', onlineCount, player);
+	io.emit('online', onlineCnt, PLAYER);
 
 	socket.on('disconnect', () => {
-		onlineCount--;
-		console.log(onlineCount);
-		io.emit('online', (onlineCount < 0 ? 0 : onlineCount));
+		onlineCnt--;
+		console.log(`disconnect, now online count: ${onlineCnt}`);
+		io.emit('online', (onlineCnt < 0 ? 0 : onlineCnt));
 	});
 
 	socket.on('setName', (name) => {
 		// name = decodeURIComponent(name);
-		if ( find(name) == -1 && cnt < player ) {
-//************ bug to fix: multiple user get same CNT
+		if ( findIdByName(name) == -1 && cnt < PLAYER ) {
+			// should work and wont confict.
 			playerList[cnt].vis = true;
 			playerList[cnt].name = name;
 			// pass token to client
 			io.to(socket.id).emit('sendToken', playerList[cnt].token);
-			console.log('\n*************************\n', 'user number: ' + cnt + 'new user login: ' + name, '\n*************************\n');
+			console.log('\n*************************\n' + 'new user login: ' + name + '\n*************************\n');
 			cnt++;
 		} else {
 			console.log('\nuser relogin: ' + name + '\n' + 'now online: ' + userList() + '\n');
 		}
-
-		if ( cnt <= player ) {
-			io.emit('setGame', Rnd, onlineCount, userList(), scoreList(), record);
+		// console.log('cnt, PLAYER: ' + cnt + ', ' + PLAYER);
+		if ( cnt <= PLAYER ) {
+			io.emit('setGame', Rnd, onlineCnt, userList(), record);
 			io.emit('setScoreboard', userList());
+			io.emit('sendName', name);
 		}
 	});
 
 	socket.on('getName', (token) => {
-		for ( let i=0; i<player; ++i )
+		for ( let i=0; i<PLAYER; ++i )
 			if ( token == playerList[i].token )
 				io.to(socket.id).emit('sendName', playerList[i].name);
 	});
 
 	socket.on('nextRnd', () => {
 		let finCnt = 0;
-		for(let v of vis())
-			if(v) finCnt++;
+		for ( let v of vis() )
+			if ( v ) finCnt++;
 
-		if ( finCnt == player ) {
+		if ( finCnt == PLAYER ) {
 			// highlight bar moving
 			io.emit('highlight', Rnd);
 			if ( Rnd < insList.length ) {
 				io.emit('setIO', Rnd, value[Rnd], record);
 				Rnd++;
-				for ( let i=0; i<player; ++i )	playerList[i].vis = false;
+				for ( let i=0; i<PLAYER; ++i )	playerList[i].vis = false;
 				console.log('\n\n==================================================');
 				console.log('Round: ' + Rnd);
 			} else {
@@ -146,24 +149,32 @@ io.on('connection', (socket) => {
 		}
 	});
 
-	socket.on('refresh', (id) => {
-		if ( 0 <= id && id < player ) {
-			io.emit('setIO', Rnd-1, value[Rnd-1], record);
-			// io.emit('setScoreboard', userList);
-			io.emit('update', id, playerList[id].queue, playerList[id].stack, userList(), vis());
-			io.emit('score', id, scoreList(), vis(), true, userList());
+	socket.on('refresh', (token) => {
+		let id = findIdByToken(token);
+		// can not find user by token
+		if(id == -1) {
+			console.log(`invalid token: ${token}`);
+			return;
 		}
+		let client = io.to(socket.id);
+		client.emit('setIO', Rnd-1, value[Rnd-1], record);
+		client.emit('setName', playerList[id].name);
+		client.emit('setScoreboard', userList);
+		client.emit('update', playerList[id].queue, playerList[id].stack, userList(), vis());
+		client.emit('score', scoreList(), vis(), userList());
 	});
 
-	socket.on('click', (name, container) => {
-		let id = find(name);
-		if ( 0 <= id && id < player ) {
+	socket.on('click', (token, container) => {
+		let id = findIdByToken(token);
+		console.log('token: ' + token);
+		console.log('click id: ' + id);
+		if ( 0 <= id && id < PLAYER ) {
 			if ( container == 'q' ) {
-				console.log('activity: ' + name + ' click queue\n');
+				console.log(`activity: ${playerList[id].name} click queue\n`);
 				if ( record[0][Rnd-1] == 'i' )	DoMove(id, 'i', 'q');
 				else if ( playerList[id].queue.length > 0 )	DoMove(id, 'o', 'q');
 			} else {
-				console.log('activity: ' + name + ' click stack\n');
+				console.log(`activity: ${playerList[id].name} click stack\n`);
 				if ( record[0][Rnd-1] == 'i' )	DoMove(id, 'i', 's');
 				else if ( playerList[id].stack.length > 0 )	DoMove(id, 'o', 's');
 			}
@@ -171,9 +182,15 @@ io.on('connection', (socket) => {
 	});
 });
 
-function find(x) {
-	for ( let i=0; i<player; ++i )
-		if ( playerList[i].name == x )	return i;
+function findIdByName(n) {
+	for( let i=0; i<PLAYER; ++i )
+		if ( playerList[i].name == n ) return i;
+	return -1;
+}
+
+function findIdByToken(x) {
+	for ( let i=0; i<PLAYER; ++i )
+		if ( playerList[i].token == x )	return i;
 	return -1;
 }
 
@@ -182,7 +199,7 @@ function randomValue(max_value) {
 }
 
 function DoMove(id, act, container) {
-	if ( 0 <= id && id < player && !playerList[id].vis ) {
+	if ( 0 <= id && id < PLAYER && !playerList[id].vis ) {
 		playerList[id].vis = true;
 		console.log('click states: ' + playerList[id].vis);
 		if ( act == 'i' ) {
@@ -202,14 +219,23 @@ function DoMove(id, act, container) {
 				playerList[id].stack.pop();
 			}
 		}
+		
 		console.dir(playerList[id].queue);
 		console.dir(playerList[id].stack);
+
+		// calculate score
 		playerList[id].score = 0;
 		for ( let i=0; i<playerList[id].queue.length; ++i )
 			playerList[id].score += playerList[id].queue[i];
 		for ( let i=0; i<playerList[id].stack.length; ++i )
 			playerList[id].score += playerList[id].stack[i];
-		io.emit('update', id, playerList[id].queue, playerList[id].stack, userList(), vis());
-		io.emit('score', id, scoreList(), vis(), false, userList());
+
+		io.to(socket.id).emit('update', playerList[id].queue, playerList[id].stack, userList(), vis());
+		let finCnt = 0;
+		for ( let v of vis() )
+			if ( v )
+				finCnt++;
+		if ( finCnt == PLAYER )
+			io.to(socket.id).emit('score', scoreList(), vis(), userList());
 	}
 }
