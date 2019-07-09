@@ -1,4 +1,4 @@
-var token, player, socket;
+var player, socket;
 
 document.addEventListener('DOMContentLoaded', function() {
 	socket = io();
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			}
 		}
 		// refresh
-		if ( Rnd > 0 )	socket.emit('refresh', token);
+		if ( Rnd > 0 )	socket.emit('refresh', getCookie('userToken'));
 	});
 
 	socket.on('setScoreboard', (userList) => {
@@ -123,11 +123,11 @@ document.addEventListener('DOMContentLoaded', function() {
 			}
 	});
 
-	socket.on('score', (scoreList, vis, userList) => {
+	socket.on('score', (scoreList, vis, userList, refresh) => {
 		var PlayerCnt = 0;
 		for ( let i=0; i<player; ++i )	if ( vis[i] )	PlayerCnt++;
-		if ( PlayerCnt == player ) {
-			for ( var i=0; i<player; ++i ) {
+		if ( PlayerCnt == player || refresh ) {
+			for ( let i=0; i<player; ++i ) {
 				$('#Team' + i).text(userList[i]);
 				$('#score' + i).text(scoreList[i]);
 			}
@@ -167,7 +167,7 @@ function getCookie(prefix) {
 }
 
 function checkCookie() {
-	token = getCookie('userToken'), user = '';
+	let token = getCookie('userToken'), user = '';
 	if ( token == '' ) {
 		do {
 			user = prompt('歡迎！異世界的勇者們呀，請輸入你們小隊的隊名！');
@@ -179,9 +179,9 @@ function checkCookie() {
 }
 
 function click_queue() {
-	socket.emit('click', token, 'q');
+	socket.emit('click', getCookie('userToken'), 'q');
 }
 
 function click_stack() {
-	socket.emit('click', token, 's');
+	socket.emit('click', getCookie('userToken'), 's');
 }

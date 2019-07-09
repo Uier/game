@@ -22,7 +22,7 @@ server.listen(8888, () => {
 });
 
 // setup
-const PLAYER = process.argv[3];
+const PLAYER = Number(process.argv[3]);
 const GAME_CONFIG = JSON.parse(fs.readFileSync(process.argv[2], 'ascii'));
 var onlineCnt = 0, Rnd = 0, cnt = 0;
 var value = [];
@@ -115,9 +115,9 @@ io.on('connection', (socket) => {
 		}
 		// console.log('cnt, PLAYER: ' + cnt + ', ' + PLAYER);
 		if ( cnt <= PLAYER ) {
-			io.emit('setGame', Rnd, onlineCnt, userList(), record);
-			io.emit('setScoreboard', userList());
-			io.emit('sendName', name);
+			io.to(socket.id).emit('setGame', Rnd, onlineCnt, userList(), record);
+			io.to(socket.id).emit('setScoreboard', userList());
+			io.to(socket.id).emit('sendName', name);
 		}
 	});
 
@@ -125,6 +125,7 @@ io.on('connection', (socket) => {
 		for ( let i=0; i<PLAYER; ++i )
 			if ( token == playerList[i].token )
 				io.to(socket.id).emit('sendName', playerList[i].name);
+		io.to(socket.id).emit('setGame', Rnd, onlineCnt, userList(), record);
 	});
 
 	socket.on('nextRnd', () => {
@@ -157,11 +158,12 @@ io.on('connection', (socket) => {
 			return;
 		}
 		let client = io.to(socket.id);
+		let ul = userList(), vs = vis();
+		console.log('refreshing function call');
 		client.emit('setIO', Rnd-1, value[Rnd-1], record);
-		client.emit('setName', playerList[id].name);
-		client.emit('setScoreboard', userList);
-		client.emit('update', playerList[id].queue, playerList[id].stack, userList(), vis());
-		client.emit('score', scoreList(), vis(), userList());
+		client.emit('setScoreboard', ul);
+		client.emit('update', playerList[id].queue, playerList[id].stack, vs);
+		client.emit('score', scoreList(), vs, ul, true);
 	});
 
 	socket.on('click', (token, container) => {
@@ -171,12 +173,12 @@ io.on('connection', (socket) => {
 		if ( 0 <= id && id < PLAYER ) {
 			if ( container == 'q' ) {
 				console.log(`activity: ${playerList[id].name} click queue\n`);
-				if ( record[0][Rnd-1] == 'i' )	DoMove(id, 'i', 'q');
-				else if ( playerList[id].queue.length > 0 )	DoMove(id, 'o', 'q');
+				if ( record[0][Rnd-1] == 'i' )	DoMove(socket.id, id, 'i', 'q');
+				else if ( playerList[id].queue.length > 0 )	DoMove(socket.id, id, 'o', 'q');
 			} else {
 				console.log(`activity: ${playerList[id].name} click stack\n`);
-				if ( record[0][Rnd-1] == 'i' )	DoMove(id, 'i', 's');
-				else if ( playerList[id].stack.length > 0 )	DoMove(id, 'o', 's');
+				if ( record[0][Rnd-1] == 'i' )	DoMove(socket.id, id, 'i', 's');
+				else if ( playerList[id].stack.length > 0 )	DoMove(socket.id, id, 'o', 's');
 			}
 		}
 	});
@@ -198,7 +200,7 @@ function randomValue(max_value) {
 	return 1 + Math.floor(Math.random() * max_value);
 }
 
-function DoMove(id, act, container) {
+function DoMove(socketId, id, act, container) {
 	if ( 0 <= id && id < PLAYER && !playerList[id].vis ) {
 		playerList[id].vis = true;
 		console.log('click states: ' + playerList[id].vis);
@@ -230,12 +232,12 @@ function DoMove(id, act, container) {
 		for ( let i=0; i<playerList[id].stack.length; ++i )
 			playerList[id].score += playerList[id].stack[i];
 
-		io.to(socket.id).emit('update', playerList[id].queue, playerList[id].stack, userList(), vis());
+		io.to(socketId).emit('update', playerList[id].queue, playerList[id].stack, userList(), vis());
 		let finCnt = 0;
 		for ( let v of vis() )
 			if ( v )
 				finCnt++;
 		if ( finCnt == PLAYER )
-			io.to(socket.id).emit('score', scoreList(), vis(), userList());
+			io.to(socketId).emit('score', scoreList(), vis(), userList(), false);
 	}
 }
