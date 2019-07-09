@@ -137,6 +137,23 @@ document.addEventListener('DOMContentLoaded', function() {
 	socket.on('score', function(id, scoreList, vis, refresh, userList) {
 		var PlayerCnt = 0;
 		for ( let i=0; i<player; ++i )	if ( vis[i] )	PlayerCnt++;
+
+		// sort by score
+		let arr = [];
+		for(let i=0; i<player; ++i) {
+			arr.push({
+				score: scoreList[i],
+				name: userList[i]
+			});
+		}
+		arr.sort((a, b) => {
+			return b.score - a.score;
+		});
+		for(let i=0; i<player; ++i) {
+			scoreList[i] = arr[i].score;
+			userList[i] = arr[i].name;
+		}
+
 		if ( PlayerCnt == player || refresh ) {
 			for ( var i=0; i<player; ++i ) {
 				$('#Team' + i).text(userList[i]);
