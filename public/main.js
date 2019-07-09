@@ -4,25 +4,25 @@ var socket;
 document.addEventListener('DOMContentLoaded', function() {
 	socket = io();
 
-	socket.on('connect', function() {
+	socket.on('connect', () => {
 		console.log('connected');
 		$('#status').text('Connected');
-		name = checkCookie();
+		checkCookie();
 		$('#username').text(name);
 	});
 
-	socket.on('online', function(amount, plyr) {
-		if ( amount > plyr )
+	socket.on('online', (onlineCnt, PLAYER) => {
+		if ( onlineCnt > PLAYER )
 			socket.disconnect();
-		$('#online').text((amount > plyr ? plyr : amount));
-		player = plyr;
+		$('#online').text((onlineCnt > PLAYER ? PLAYER : onlineCnt));
+		player = PLAYER;
 	});
 
-	socket.on('disconnect', function() {
+	socket.on('disconnect', () => {
 			$('#status').text('Disconnected');
 	});
 
-	socket.on('setgame', function(Rnd, amount, userList, scoreList, data) {
+	socket.on('setgame', (Rnd, onlineCnt, userList, scoreList, data) => {
 		// allocate instructions
 		if ( init == false ) {
 			// init = true;
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		// update users
 		for ( let i=0; i<player; ++i )	$('#Team' + i).text(userList[i]);
 		// start require
-		if ( amount == player && Rnd == 0 ) {
+		if ( onlineCnt == player && Rnd == 0 ) {
 			socket.emit('nextRnd');
 			for ( let i=0; i<player; ++i ) {
 				var str = '#Team' + i;
@@ -63,11 +63,11 @@ document.addEventListener('DOMContentLoaded', function() {
 			}
 		}
 		// refresh
-		// waiting for modification, pass userName_hashing value to server and find id.
+//******** bug to fix, pass userName_hashing value to server and find id.
 		if ( Rnd > 0 )	socket.emit('refresh', userList.findIndex(findName));
 	});
 
-	socket.on('setscoreboard', function(userList, scoreList) {
+	socket.on('setscoreboard', (userList, scoreList) => {
 		if ( init == false ) {
 			init = true;
 			for ( let i=0; i<player; ++i ) {
@@ -81,14 +81,14 @@ document.addEventListener('DOMContentLoaded', function() {
 		}
 	});
 
-	socket.on('highlight', function(Rnd) {
+	socket.on('highlight', (Rnd) => {
 		$('#rnd' + Rnd).css('color', 'white');
 		$('#rnd' + Rnd).css('background-color', '#131F37');
 		$('#rnd' + (Rnd+1)).css('color', 'black');
 		$('#rnd' + (Rnd+1)).css('background-color', 'yellow');
 	});
 
-	socket.on('setIO', function(Rnd, val, data) {
+	socket.on('setIO', (Rnd, val, data) => {
 		$('#head').text('Please ');
 		if ( data[0][Rnd] == 'i' ) {
 			if ( data[1][Rnd] == '?' )	$('#rnd' + (Rnd+1)).text('Push');
@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		}
 	});
 
-	socket.on('setEnd', function() {
+	socket.on('setEnd', () => {
 		$('#head').text('End');
 		$('#instruction').text('');
 		$('#element').text('');
@@ -151,14 +151,22 @@ document.addEventListener('DOMContentLoaded', function() {
 			}
 		}
 	});
+
+	socket.on('sendToken', (token) => {
+		setCookie(token);
+	});
+
+	socket.on('sendName', (user) => {
+		name = user;
+	});
 });
 
 function findName(element) {
 	return Number(element == name);
 }
 
-function setCookie(name) {
-	document.cookie = 'username=' + name + ';';
+function setCookie(token) {
+	document.cookie = 'userToken=' + token + ';';
 }
 
 function getCookie(prefix) {
@@ -173,19 +181,16 @@ function getCookie(prefix) {
 }
 
 function checkCookie() {
-	var user = getCookie('username');
-
-	if ( user == '' ) {
+	var token = getCookie('userToken'), user = '';
+	var sessionId = getCookie('');
+	if ( token == '' ) {
 		do {
 			user = prompt('歡迎！異世界的勇者們呀，請輸入你們小隊的隊名！');
 		} while ( user == null || user.length < 2 || user.length > 20 );
-		user = encodeURIComponent(user);
-		setCookie(user);
+		socket.emit('setName', user);
+	} else {
+		socket.emit('getName', token);
 	}
-
-	socket.emit('setname', user);
-
-	return decodeURIComponent(user);
 }
 
 function click_queue() {
